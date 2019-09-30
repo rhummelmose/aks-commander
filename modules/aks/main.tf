@@ -2,15 +2,15 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "resource_group" {
-  name     = "${var.name}-rg"
+  name     = "${var.prefix}-rg"
   location = var.region
 }
 
 resource "azurerm_kubernetes_cluster" "aks_cluster" {
-  name                = "${var.name}-aks-cluster"
+  name                = "${var.prefix}-aks-cluster"
   location            = azurerm_resource_group.resource_group.location
   resource_group_name = azurerm_resource_group.resource_group.name
-  dns_prefix          = "${var.name}-aks-cluster"
+  dns_prefix          = "${var.prefix}-aks-cluster"
 
   agent_pool_profile {
     name            = "default"
@@ -21,7 +21,17 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   }
 
   service_principal {
-    client_id     = var.service_principal_client_id
-    client_secret = var.service_principal_client_secret
+    client_id     = var.cluster_service_principal_client_id
+    client_secret = var.cluster_service_principal_client_secret
   }
+
+  role_based_access_control {
+    enabled = true
+        azure_active_directory {
+            server_app_id     = var.rbac_server_app_id
+            server_app_secret = var.rbac_server_app_secret
+            client_app_id     = var.rbac_client_app_id
+            tenant_id         = var.rbac_tenant_id
+        }
+    }
 }

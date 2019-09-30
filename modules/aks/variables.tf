@@ -1,4 +1,8 @@
-variable "name" {
+variable "subscription_id" {
+  type = string
+}
+
+variable "prefix" {
   type = string
 }
 
@@ -6,10 +10,26 @@ variable "region" {
   type = string
 }
 
-variable "service_principal_client_id" {
+variable "cluster_service_principal_client_id" {
   type = string
 }
 
-variable "service_principal_client_secret" {
+variable "cluster_service_principal_client_secret" {
+  type = string
+}
+
+variable "rbac_server_app_id" {
+  type = string
+}
+
+variable "rbac_server_app_secret" {
+  type = string
+}
+
+variable "rbac_client_app_id" {
+  type = string
+}
+
+variable "rbac_tenant_id" {
   type = string
 }

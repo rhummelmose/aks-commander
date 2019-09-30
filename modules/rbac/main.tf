@@ -1,5 +1,12 @@
 ######################################################################### PROVIDERS
 provider "azuread" {
+  alias     = "rbac"
+  tenant_id = var.rbac_aad_tenant_id
+}
+
+provider "azuread" {
+  alias     = "cluster"
+  tenant_id = var.cluster_aad_tenant_id
 }
 
 ######################################################################### LOCALS
@@ -9,19 +16,21 @@ locals {
 
 ######################################################################### CLUSTER
 resource "azuread_application" "aks_cluster" {
-  name = "${var.name}-aks-cluster"
+  provider = azuread.cluster
+  name = "${var.prefix}-aks-cluster"
   type = "native"
 }
 
 resource "azuread_service_principal" "aks_cluster" {
+  provider = azuread.cluster
   application_id = azuread_application.aks_cluster.application_id
   # The following tag is required to make the service principal visible under enterprise applications in the portal
   tags = ["WindowsAzureActiveDirectoryIntegratedApp"]
 }
 
-resource "random_string" "aks_cluster_password" {
+resource "random_password" "aks_cluster_password" {
   length = 16
-  special = false
+  special = true
 
   keepers = {
     azuread_application = azuread_application.aks_cluster.application_id
@@ -29,8 +38,9 @@ resource "random_string" "aks_cluster_password" {
 }
 
 resource "azuread_application_password" "aks_cluster_passwod" {
+  provider = azuread.cluster
   application_object_id = azuread_application.aks_cluster.id
-  value = random_string.aks_cluster_password.result
+  value = random_password.aks_cluster_password.result
 
   end_date = timeadd(timestamp(), "87600h")
 
@@ -42,7 +52,8 @@ resource "azuread_application_password" "aks_cluster_passwod" {
 
 ######################################################################### SERVER
 resource "azuread_application" "server" {
-  name                    = "${var.name}-aks-cluster-server"
+  provider = azuread.rbac
+  name                    = "${var.prefix}-aks-cluster-server"
   reply_urls              = [local.redirect_url]
   type                    = "webapp/api"
   group_membership_claims = "All"
@@ -87,14 +98,20 @@ resource "azuread_application" "server" {
 }
 
 resource "azuread_service_principal" "server" {
+  provider = azuread.rbac
   application_id = azuread_application.server.application_id
   # The following tag is required to make the service principal visible under enterprise applications in the portal
   tags = ["WindowsAzureActiveDirectoryIntegratedApp"]
+
+  provisioner "local-exec" {
+    command = "sleep 30s && az ad app permission admin-consent --id ${azuread_application.server.application_id}"
+  }
 }
 
 resource "azuread_application_password" "server" {
+  provider = azuread.rbac
   application_object_id = azuread_application.server.id
-  value = "${random_string.application_server_password.result}"
+  value = "${random_password.application_server_password.result}"
   end_date = "${timeadd(timestamp(), "87600h")}" # 10 years
 
   # The end date will change at each run (terraform apply), causing a new password to 
@@ -107,7 +124,7 @@ resource "azuread_application_password" "server" {
   }
 }
 
-resource "random_string" "application_server_password" {
+resource "random_password" "application_server_password" {
   length  = 16
   special = true
 
@@ -119,7 +136,8 @@ resource "random_string" "application_server_password" {
 ######################################################################### CLIENT
 
 resource "azuread_application" "client" {
-  name       = "${var.name}-aks-cluster-client"
+  provider = azuread.rbac
+  name       = "${var.prefix}-aks-cluster-client"
   reply_urls = [local.redirect_url]
   type       = "native"
 
@@ -148,7 +166,12 @@ resource "azuread_application" "client" {
 }
 
 resource "azuread_service_principal" "client" {
+  provider = azuread.rbac
   application_id = azuread_application.client.application_id
   # The following tag is required to make the service principal visible under enterprise applications in the portal
   tags = ["WindowsAzureActiveDirectoryIntegratedApp"]
+
+  provisioner "local-exec" {
+    command = "sleep 30s && az ad app permission admin-consent --id ${azuread_application.client.application_id}"
+  }
 }
