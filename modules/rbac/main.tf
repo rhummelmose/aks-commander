@@ -102,10 +102,6 @@ resource "azuread_service_principal" "server" {
   application_id = azuread_application.server.application_id
   # The following tag is required to make the service principal visible under enterprise applications in the portal
   tags = ["WindowsAzureActiveDirectoryIntegratedApp"]
-
-  provisioner "local-exec" {
-    command = "sleep 30s && az ad app permission admin-consent --id ${azuread_application.server.application_id}"
-  }
 }
 
 resource "azuread_application_password" "server" {
@@ -170,8 +166,26 @@ resource "azuread_service_principal" "client" {
   application_id = azuread_application.client.application_id
   # The following tag is required to make the service principal visible under enterprise applications in the portal
   tags = ["WindowsAzureActiveDirectoryIntegratedApp"]
+}
 
+######################################################################### LOCAL-EXEC
+
+resource "null_resource" "rbac_local_exec" {
   provisioner "local-exec" {
-    command = "sleep 30s && az ad app permission admin-consent --id ${azuread_application.client.application_id}"
+    command = <<EOF
+    bash ${path.module}/scripts/verify_azure_cli.sh && \
+    bash ${path.module}/scripts/verify_service_principals.sh ${azuread_service_principal.aks_cluster.id} ${azuread_service_principal.server.id} ${azuread_service_principal.client.id} && \
+    bash ${path.module}/scripts/ensure_admin_consent.sh ${var.rbac_aad_tenant_id} ${azuread_service_principal.server.application_id} ${azuread_service_principal.client.application_id} \"$(printf '%s' '${random_password.application_server_password.result}')\"
+    EOF
   }
+}
+
+data "external" "secret_in_out" {
+  program = ["bash", "${path.module}/scripts/secret_in_out.sh"]
+  query = {
+    secret = random_password.application_server_password.result
+  }
+  depends_on = [
+    null_resource.rbac_local_exec
+  ]
 }

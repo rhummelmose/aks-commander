@@ -19,5 +19,5 @@ output "server_app_id" {
 }
 
 output "server_app_secret" {
-  value = random_password.application_server_password.result
+  value = data.external.secret_in_out.result.secret
 }

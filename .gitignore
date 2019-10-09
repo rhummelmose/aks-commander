@@ -33,3 +33,6 @@ override.tf.json
 
 # Default vars
 terraform.tfvars
+
+# VSCode
+.vscode/
