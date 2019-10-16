@@ -18,6 +18,11 @@ variable "prefix" {
   description = "Prefix for all the resources provisioned"
 }
 
+variable "suffix" {
+  type        = string
+  description = "Suffix for all the resources provisioned"
+}
+
 variable "region" {
   type        = string
   description = "The Azure region in which to provision resources"

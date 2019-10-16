@@ -2,6 +2,10 @@ variable "prefix" {
   type = string
 }
 
+variable "suffix" {
+  type = string
+}
+
 variable "cluster_aad_tenant_id" {
   type = string
 }

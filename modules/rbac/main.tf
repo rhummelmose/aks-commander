@@ -17,7 +17,7 @@ locals {
 ######################################################################### CLUSTER
 resource "azuread_application" "aks_cluster" {
   provider = azuread.cluster
-  name = "${var.prefix}-aks-cluster"
+  name = "${var.prefix}-aks-cluster-${var.suffix}"
   type = "native"
 }
 
@@ -53,7 +53,7 @@ resource "azuread_application_password" "aks_cluster_passwod" {
 ######################################################################### SERVER
 resource "azuread_application" "server" {
   provider = azuread.rbac
-  name                    = "${var.prefix}-aks-cluster-server"
+  name                    = "${var.prefix}-aks-cluster-server-${var.suffix}"
   reply_urls              = [local.redirect_url]
   type                    = "webapp/api"
   group_membership_claims = "All"
@@ -133,7 +133,7 @@ resource "random_password" "application_server_password" {
 
 resource "azuread_application" "client" {
   provider = azuread.rbac
-  name       = "${var.prefix}-aks-cluster-client"
+  name       = "${var.prefix}-aks-cluster-client-${var.suffix}"
   reply_urls = [local.redirect_url]
   type       = "native"
 

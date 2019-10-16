@@ -8,6 +8,7 @@ application_secret_server=$4
 target_cycle_timeout_seconds=300
 sleep_seconds_between_retries=5
 max_retries_per_cycle=$(expr $target_cycle_timeout_seconds / $sleep_seconds_between_retries)
+scripts_path="$(cd "$(dirname "$0")" && pwd)"
 
 application_grant_admin_consent () {
     local application_id=$1
@@ -59,8 +60,10 @@ verify_admin_consent () {
         success=$?
         [ $retry_counter -ne $max_retries_per_cycle ]
         should_retry=$?
-        local encoded_jwt=$(echo ${output} | jq --raw-output .access_token)
-        local decoded_jwt=$(bash scripts/jwt_decode.sh "${encoded_jwt}")
+        echo "Getting encoded jwt.."
+        local encoded_jwt=$(printf '%s' $output | jq --raw-output .access_token)
+        echo "Decoding jwt.."
+        local decoded_jwt=$(bash "${scripts_path}/jwt_decode.sh" $(printf '%s' $encoded_jwt))
         echo "Checking for required role.."
         [[ $decoded_jwt = *"${directory_read_all}"* ]]
         has_directory_read_all=$?
@@ -93,20 +96,20 @@ request_ms_graph_token() {
         --request POST \
         --url $url  \
         --header "content-type: application/x-www-form-urlencoded" \
-        --data "grant_type=client_credentials" \
-        --data "scope=${ms_graph_scope}" \
-        --data "client_id=${client_id}" \
-        --data "client_secret=${secret}"
+        --data-urlencode "grant_type=client_credentials" \
+        --data-urlencode "scope=${ms_graph_scope}" \
+        --data-urlencode "client_id=${client_id}" \
+        --data-urlencode "client_secret=${secret}"
 }
 
 echo "Granting admin consent.."
 application_grant_admin_consent $application_id_server
 application_grant_admin_consent $application_id_client
 
-echo "Verifying admin consent.."
-verify_admin_consent $aad_tenant_id $application_id_server $application_secret_server
+#echo "Verifying admin consent.."
+#verify_admin_consent $aad_tenant_id $application_id_server $application_secret_server
 
-echo "Sleeping for 30s.."
-sleep 30s
+echo "Sleeping for 60s.."
+sleep 60s
 
 exit 0
