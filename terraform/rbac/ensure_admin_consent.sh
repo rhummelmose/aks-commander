@@ -8,7 +8,7 @@ application_secret_server=$4
 target_cycle_timeout_seconds=300
 sleep_seconds_between_retries=5
 max_retries_per_cycle=$(expr $target_cycle_timeout_seconds / $sleep_seconds_between_retries)
-scripts_path="$(cd "$(dirname "$0")" && pwd)"
+scripts_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 application_grant_admin_consent () {
     local application_id=$1

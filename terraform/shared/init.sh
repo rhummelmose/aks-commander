@@ -7,7 +7,7 @@ set -e
 terraform_module=$1
 
 # Ensure portability
-scripts_path="$(cd "$(dirname "$0")" && pwd)"
+scripts_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # Install Terraform 0.12.12 if on Linux
 if [[ $(uname) == *"Linux"* ]] && [[ $(terraform version) != *"v0.12.12"* ]]; then

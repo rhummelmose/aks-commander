@@ -5,7 +5,7 @@ set -e
 
 resource_group=$1
 cluster_name=$2
-scripts_path="$(cd "$(dirname "$0")" && pwd)"
+scripts_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 if [ -z $resource_group ]; then
     echo "Resource group required as 1st parameter.."
