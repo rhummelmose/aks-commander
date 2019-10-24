@@ -20,7 +20,7 @@ fi
 set -o allexport
 source "${scripts_path}/terraform_backend.env"
 source "${scripts_path}/terraform_global.env"
-set +o allexpor
+set +o allexport
 
 # Source from env set either locally via IDE or CI/CD
 backend_client_secret=$AKSCOMM_TF_BACKEND_CLIENT_SECRET
