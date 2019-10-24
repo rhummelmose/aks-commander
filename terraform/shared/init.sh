@@ -47,6 +47,20 @@ fi
 
 az account set --subscription $azure_cli_target_subscription
 
+# If we're running on Azure DevOps, we have to get credentials from env vars
+if [ ! -z $servicePrincipalId ]; then
+    export ARM_CLIENT_ID=$servicePrincipalId
+fi
+
+if [ ! -z $servicePrincipalKey ]; then
+    export ARM_CLIENT_SECRET=$servicePrincipalKey
+fi
+
+if [ ! -z $tenantId ]; then
+    export ARM_TENANT_ID=$tenantId
+    export ARM_SUBSCRIPTION_ID=$(az account show --query 'id' --output tsv)
+fi
+
 # Terraform
 terraform init \
     -backend-config="tenant_id=${TF_VAR_tf_backend_tenant_id}" \

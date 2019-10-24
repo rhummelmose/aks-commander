@@ -23,3 +23,4 @@ stages:
         scriptType: bash
         scriptPath: provision_core_infrastructure.sh
         scriptArguments: $(AKSCOMM_TF_BACKEND_CLIENT_SECRET)
+        addSpnToEnvironment: true
