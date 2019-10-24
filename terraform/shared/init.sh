@@ -10,6 +10,7 @@ terraform_relative_path=$1
 scripts_path="$(cd "$(dirname "$0")" && pwd)"
 
 # Install Terraform 0.12.12 if on Linux
+echo $(uname)
 if [[ $(uname) == *"Linux"* ]] && [[ $(terraform version) != *"0.12.12"* ]]; then
     wget "https://releases.hashicorp.com/terraform/0.12.12/terraform_0.12.12_linux_amd64.zip"
     unzip terraform_0.12.12_linux_amd64.zip
