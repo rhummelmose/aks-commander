@@ -4,7 +4,7 @@
 set -e
 
 # Get terraform relative path
-terraform_relative_path=$1
+terraform_module=$1
 
 # Ensure portability
 scripts_path="$(cd "$(dirname "$0")" && pwd)"
@@ -47,7 +47,7 @@ function source_tfvars() {
     )"
 }
 
-source_tfvars "${scripts_path}/../${terraform_relative_path}/terraform.tfvars"
+source_tfvars "${scripts_path}/../${terraform_module}/terraform.tfvars"
 declare azure_cli_target_subscription
 if [ ! -z $subscription_id ]; then
     azure_cli_target_subscription=$subscription_id
@@ -82,4 +82,4 @@ terraform init \
     -backend-config="storage_account_name=${TF_VAR_tf_backend_storage_account_name}" \
     -backend-config="container_name=${TF_VAR_tf_backend_container_name}" \
     -backend-config="client_secret=${backend_client_secret}" \
-    "${scripts_path}/../${terraform_relative_path}"
+    "${scripts_path}/../${terraform_module}"

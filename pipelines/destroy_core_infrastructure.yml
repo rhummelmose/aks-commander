@@ -21,6 +21,6 @@ stages:
       inputs:
         azureSubscription: arm-service-connection-rh-subcription-vse-950dkk
         scriptType: bash
-        scriptPath: destroy_core_infrastructure.sh
-        scriptArguments: $(AKSCOMM_TF_BACKEND_CLIENT_SECRET)
+        scriptPath: destroy.sh
+        scriptArguments: "core $(AKSCOMM_TF_BACKEND_CLIENT_SECRET)"
         addSpnToEnvironment: true
