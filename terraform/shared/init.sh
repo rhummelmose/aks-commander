@@ -9,6 +9,11 @@ terraform_relative_path=$1
 # Ensure portability
 scripts_path="$(cd "$(dirname "$0")" && pwd)"
 
+# Install latest Terraform
+wget "https://releases.hashicorp.com/terraform/0.12.12/terraform_0.12.12_linux_amd64.zip"
+unzip terraform_0.12.12_linux_amd64.zip
+sudo mv terraform /usr/local/bin/
+
 # Source from env set either locally via IDE or CI/CD
 backend_client_secret=$AKSCOMM_TF_BACKEND_CLIENT_SECRET
 
