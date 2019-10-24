@@ -6,8 +6,6 @@ resources:
 
 variables:
 - group: "terraform-backend"
-- name: "azure-arm-service-connection"
-  value: "azure-devops-arm-service-connection"
 
 stages:
 - stage: provision
@@ -21,7 +19,7 @@ stages:
     - task: AzureCLI@2
       displayName: Azure CLI
       inputs:
-        azureSubscription: $(azure-arm-service-connection)
+        azureSubscription: $(arm-service-connection-rahummel-subscription-microsoft-internal)
         scriptType: bash
         scriptPath: provision_core_infrastructure.sh
-        scriptArguments: ${AKSCOMM_TF_BACKEND_CLIENT_SECRET}
+        scriptArguments: $(AKSCOMM_TF_BACKEND_CLIENT_SECRET)
