@@ -1,3 +1,5 @@
+name: provision-core-infrastructure
+
 trigger:
 - none
 
