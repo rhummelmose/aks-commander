@@ -14,8 +14,5 @@ fi
 # Current scripts path
 script_path="$(cd "$(dirname "$0")" && pwd)"
 
-# Move into Terraform module directory
-cd "${script_path}/terraform/core"
-
 # Terraform apply
 bash "${script_path}/terraform/shared/apply.sh" "core"
