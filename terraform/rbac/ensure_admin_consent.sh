@@ -19,7 +19,7 @@ application_grant_admin_consent () {
         local output
         local success
         local propogation_error
-        local max_retries_exceeded
+        local should_retry
         output=$(az ad app permission admin-consent --id $application_id 2>&1)
         success=$?
         [[ $output = *"${aad_graph_exception_substring}"* ]]
@@ -63,7 +63,7 @@ verify_admin_consent () {
         echo "Getting encoded jwt.."
         local encoded_jwt=$(printf '%s' $output | jq --raw-output .access_token)
         echo "Decoding jwt.."
-        local decoded_jwt=$(bash "${scripts_path}/jwt_decode.sh" $(printf '%s' $encoded_jwt))
+        local decoded_jwt=$(bash "${scripts_path}/../shared/jwt_decode.sh" $(printf '%s' $encoded_jwt))
         echo "Checking for required role.."
         [[ $decoded_jwt = *"${directory_read_all}"* ]]
         has_directory_read_all=$?

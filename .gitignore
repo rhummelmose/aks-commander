@@ -31,8 +31,9 @@ override.tf.json
 # macOS
 .DS_Store
 
-# Default vars
-terraform.tfvars
-
 # VSCode
 .vscode/
+
+# Output files
+AKSCOMM_INGRESS_PUBLIC_IP_VALUE
+AKSCOMM_INGRESS_PUBLIC_IP_ID

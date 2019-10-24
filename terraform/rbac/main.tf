@@ -1,12 +1,13 @@
-######################################################################### PROVIDERS
-provider "azuread" {
-  alias     = "rbac"
-  tenant_id = var.rbac_aad_tenant_id
+######################################################################### BACKEND
+terraform {
+  backend "azurerm" {
+    key                  = "rbac.terraform.tfstate"
+  }
 }
 
+######################################################################### PROVIDERS
 provider "azuread" {
-  alias     = "cluster"
-  tenant_id = var.cluster_aad_tenant_id
+  tenant_id = var.tenant_id
 }
 
 ######################################################################### LOCALS
@@ -14,46 +15,9 @@ locals {
   redirect_url = "https://login.microsoftonline.com/common/oauth2/nativeclient"
 }
 
-######################################################################### CLUSTER
-resource "azuread_application" "aks_cluster" {
-  provider = azuread.cluster
-  name = "${var.prefix}-aks-cluster-${var.suffix}"
-  type = "native"
-}
-
-resource "azuread_service_principal" "aks_cluster" {
-  provider = azuread.cluster
-  application_id = azuread_application.aks_cluster.application_id
-  # The following tag is required to make the service principal visible under enterprise applications in the portal
-  tags = ["WindowsAzureActiveDirectoryIntegratedApp"]
-}
-
-resource "random_password" "aks_cluster_password" {
-  length = 16
-  special = true
-
-  keepers = {
-    azuread_application = azuread_application.aks_cluster.application_id
-  }
-}
-
-resource "azuread_application_password" "aks_cluster_passwod" {
-  provider = azuread.cluster
-  application_object_id = azuread_application.aks_cluster.id
-  value = random_password.aks_cluster_password.result
-
-  end_date = timeadd(timestamp(), "87600h")
-
-  lifecycle {
-    ignore_changes = [
-      "end_date"]
-  }
-}
-
 ######################################################################### SERVER
 resource "azuread_application" "server" {
-  provider = azuread.rbac
-  name                    = "${var.prefix}-aks-cluster-server-${var.suffix}"
+  name                    = "${var.prefix}-aks-cluster-server"
   reply_urls              = [local.redirect_url]
   type                    = "webapp/api"
   group_membership_claims = "All"
@@ -98,14 +62,12 @@ resource "azuread_application" "server" {
 }
 
 resource "azuread_service_principal" "server" {
-  provider = azuread.rbac
   application_id = azuread_application.server.application_id
   # The following tag is required to make the service principal visible under enterprise applications in the portal
   tags = ["WindowsAzureActiveDirectoryIntegratedApp"]
 }
 
 resource "azuread_application_password" "server" {
-  provider = azuread.rbac
   application_object_id = azuread_application.server.id
   value = "${random_password.application_server_password.result}"
   end_date = "${timeadd(timestamp(), "87600h")}" # 10 years
@@ -132,8 +94,7 @@ resource "random_password" "application_server_password" {
 ######################################################################### CLIENT
 
 resource "azuread_application" "client" {
-  provider = azuread.rbac
-  name       = "${var.prefix}-aks-cluster-client-${var.suffix}"
+  name       = "${var.prefix}-aks-cluster-client"
   reply_urls = [local.redirect_url]
   type       = "native"
 
@@ -162,7 +123,6 @@ resource "azuread_application" "client" {
 }
 
 resource "azuread_service_principal" "client" {
-  provider = azuread.rbac
   application_id = azuread_application.client.application_id
   # The following tag is required to make the service principal visible under enterprise applications in the portal
   tags = ["WindowsAzureActiveDirectoryIntegratedApp"]
@@ -171,21 +131,12 @@ resource "azuread_service_principal" "client" {
 ######################################################################### LOCAL-EXEC
 
 resource "null_resource" "rbac_local_exec" {
+  count = var.grant_admin_consent ? 1 : 0
   provisioner "local-exec" {
     command = <<EOF
-    bash ${path.module}/scripts/verify_azure_cli.sh && \
-    bash ${path.module}/scripts/verify_service_principals.sh ${azuread_service_principal.aks_cluster.id} ${azuread_service_principal.server.id} ${azuread_service_principal.client.id} && \
-    bash ${path.module}/scripts/ensure_admin_consent.sh ${var.rbac_aad_tenant_id} ${azuread_service_principal.server.application_id} ${azuread_service_principal.client.application_id} \"$(printf '%s' '${random_password.application_server_password.result}')\"
+    bash ${path.module}/../shared/verify_azure_cli.sh && \
+    bash ${path.module}/../shared/verify_service_principals.sh ${azuread_service_principal.server.id} ${azuread_service_principal.client.id} && \
+    bash ${path.module}/ensure_admin_consent.sh ${var.tenant_id} ${azuread_service_principal.server.application_id} ${azuread_service_principal.client.application_id} \"$(printf '%s' '${random_password.application_server_password.result}')\"
     EOF
   }
-}
-
-data "external" "secret_in_out" {
-  program = ["bash", "${path.module}/scripts/secret_in_out.sh"]
-  query = {
-    secret = random_password.application_server_password.result
-  }
-  depends_on = [
-    null_resource.rbac_local_exec
-  ]
 }
