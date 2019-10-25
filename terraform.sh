@@ -37,13 +37,18 @@ if [ -z $terraform_module ] || ! [[ "$terraform_module" =~ ^(core|rbac|aks|tme)$
     exit 1
 fi
 
-# Grab service principal secret (2nd parameter if not set in env, used for Terraform's Azure storage account backend and set in env
+# Grab service principal secret (if passed as argument, used for Terraform's Azure storage account backend and set in env)
 if [ ! -z $terraform_backend_secret ]; then
     export AKSCOMM_TF_BACKEND_CLIENT_SECRET=$terraform_backend_secret
 fi
 if [ -z $AKSCOMM_TF_BACKEND_CLIENT_SECRET ]; then
     echo "Service principal secret for Terraform backend was neither passed as argument or set in env .."
     exit 1
+fi
+
+# Source the terraform workspace from env if not passed as argument
+if [ ! -z $terraform_workspace ]; then
+    terraform_workspace=$AKSCOMM_TF_WORKSPACE
 fi
 
 # Ensure portability

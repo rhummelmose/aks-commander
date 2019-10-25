@@ -22,5 +22,5 @@ stages:
         azureSubscription: arm-service-connection-rh-subcription-vse-950dkk
         scriptType: bash
         scriptPath: terraform.sh
-        scriptArguments: "--action=apply --module=rbac --workspace=$(terraform-workspace) --backend-secret=$(AKSCOMM_TF_BACKEND_CLIENT_SECRET)"
+        scriptArguments: "--action=apply --module=rbac --backend-secret=$(AKSCOMM_TF_BACKEND_CLIENT_SECRET)"
         addSpnToEnvironment: true
