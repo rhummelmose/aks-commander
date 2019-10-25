@@ -56,4 +56,8 @@ if [[ $terraform_action == "init" ]]; then
     exit 0
 fi
 
+if [ ! -z $terraform_workspace ]; then
+    terraform workspace select $terraform_workspace || terraform workspace new $terraform_workspace
+fi
+
 terraform "${terraform_action}" -auto-approve -var-file="${terraform_sh_script_path}/terraform_${terraform_module}.tfvars" "${terraform_sh_script_path}/terraform/${terraform_module}"
