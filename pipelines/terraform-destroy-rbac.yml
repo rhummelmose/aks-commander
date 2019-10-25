@@ -9,10 +9,10 @@ variables:
 
 stages:
 - stage: destroy
-  displayName: Destroy core infrastructure
+  displayName: Destroy RBAC identities
   jobs:  
   - job: destroy
-    displayName: Destroy core infrastructure
+    displayName: Destroy RBAC identities
     pool:
       vmImage: "ubuntu-latest"
     steps:

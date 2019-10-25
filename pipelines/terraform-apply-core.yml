@@ -8,11 +8,11 @@ variables:
 - group: "terraform-backend"
 
 stages:
-- stage: provision
-  displayName: Provision core infrastructure
+- stage: apply
+  displayName: Apply core infrastructure
   jobs:  
-  - job: provision
-    displayName: Provision core infrastructure
+  - job: apply
+    displayName: Apply core infrastructure
     pool:
       vmImage: "ubuntu-latest"
     steps:
