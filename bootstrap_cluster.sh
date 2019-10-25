@@ -23,9 +23,9 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-helm version >> /dev/null
+helm3 version >> /dev/null
 if [ $? -ne 0 ]; then
-    echo "helm required on PATH.."
+    echo "helm3 required on PATH.."
     exit 1
 fi
 
@@ -38,12 +38,12 @@ if [ $? -ne 0 ]; then
 fi
 
 # Apply API resources
-kubectl apply -f "${bootstrap_cluster_sh_script_path}/rbac.yml" &> bootstrap_cluster.out
-kubectl apply -f "${bootstrap_cluster_sh_script_path}/namespaces.yml" &> bootstrap_cluster.out
+kubectl apply -f "${bootstrap_cluster_sh_script_path}/resources/bootstrap_cluster/rbac.yml" &> bootstrap_cluster.out
+kubectl apply -f "${bootstrap_cluster_sh_script_path}/resources/bootstrap_cluster/namespaces.yml" &> bootstrap_cluster.out
 
 # Install Helm charts
 nginx_ingress_namespace="nginx-ingress"
-helm install nginx-ingress stable/nginx-ingress --namespace $nginx_ingress_namespace &> bootstrap_cluster.out
+helm3 install nginx-ingress stable/nginx-ingress --namespace $nginx_ingress_namespace &> bootstrap_cluster.out
 
 # Export provisioned ingress public IP
 declare provisioned_ingress_public_ip

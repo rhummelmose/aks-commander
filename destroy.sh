@@ -3,6 +3,8 @@
 # Exit if anything breaks
 set -e
 
+# 
+
 # Get terraform module
 terraform_module=$1
 if [ -z $terraform_module ]; then
