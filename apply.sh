@@ -20,9 +20,9 @@ if [ -z $AKSCOMM_TF_BACKEND_CLIENT_SECRET ]; then
 fi
 
 # Ensure portability
-script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+apply_sh_script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # Terraform init
-source "${script_path}/terraform/shared/init.sh" $terraform_module
+source "${apply_sh_script_path}/terraform/shared/init.sh" $terraform_module
 
-terraform apply -auto-approve -var-file="${script_path}/terraform/${terraform_module}/terraform.tfvars" "${script_path}/terraform/${terraform_module}"
+terraform apply -auto-approve -var-file="${apply_sh_script_path}/terraform_${terraform_module}.tfvars" "${apply_sh_script_path}/terraform/${terraform_module}"

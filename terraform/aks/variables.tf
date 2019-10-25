@@ -7,10 +7,6 @@ variable "prefix" {
   type = string
 }
 
-variable "suffix" {
-  type = string
-}
-
 variable "region" {
   type = string
 }

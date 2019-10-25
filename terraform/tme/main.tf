@@ -28,7 +28,7 @@ data "terraform_remote_state" "remote_state_core" {
 
 ######################################################################### RESOURCES
 resource "azurerm_traffic_manager_endpoint" "traffic_manager_endpoint" {
-  name                = "${var.prefix}-traffic-manager-endpoint-${var.suffix}"
+  name                = "${var.prefix}-traffic-manager-endpoint-${terraform.workspace}"
   resource_group_name = data.terraform_remote_state.remote_state_core.outputs.resource_group_name
   profile_name        = data.terraform_remote_state.remote_state_core.outputs.traffic_manager_profile_name
   target              = var.target

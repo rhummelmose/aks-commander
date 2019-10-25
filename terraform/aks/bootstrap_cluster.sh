@@ -5,7 +5,7 @@ set -e
 
 resource_group=$1
 cluster_name=$2
-scripts_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+bootstrap_cluster_sh_script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 if [ -z $resource_group ]; then
     echo "Resource group required as 1st parameter.."
@@ -38,8 +38,8 @@ if [ $? -ne 0 ]; then
 fi
 
 # Apply API resources
-kubectl apply -f "${scripts_path}/rbac.yml" &> bootstrap_cluster.out
-kubectl apply -f "${scripts_path}/namespaces.yml" &> bootstrap_cluster.out
+kubectl apply -f "${bootstrap_cluster_sh_script_path}/rbac.yml" &> bootstrap_cluster.out
+kubectl apply -f "${bootstrap_cluster_sh_script_path}/namespaces.yml" &> bootstrap_cluster.out
 
 # Install Helm charts
 nginx_ingress_namespace="nginx-ingress"

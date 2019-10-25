@@ -7,7 +7,7 @@ set -e
 terraform_module=$1
 
 # Ensure portability
-scripts_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+init_sh_script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # Install Terraform 0.12.12 if on Linux
 if [[ $(uname) == *"Linux"* ]] && [[ $(terraform version) != *"v0.12.12"* ]]; then
@@ -22,8 +22,8 @@ fi
 
 # Sets global variables in the environment
 set -o allexport
-source "${scripts_path}/terraform_backend.env"
-source "${scripts_path}/terraform_global.env"
+source "${init_sh_script_path}/../../terraform_backend.env"
+source "${init_sh_script_path}/../../terraform_global.env"
 set +o allexport
 
 # Source from env set either locally via IDE or CI/CD
@@ -47,7 +47,7 @@ function source_tfvars() {
     )"
 }
 
-source_tfvars "${scripts_path}/../${terraform_module}/terraform.tfvars"
+source_tfvars "${init_sh_script_path}/../../terraform_${terraform_module}.tfvars"
 declare azure_cli_target_subscription
 if [ ! -z $subscription_id ]; then
     azure_cli_target_subscription=$subscription_id
@@ -82,4 +82,4 @@ terraform init \
     -backend-config="storage_account_name=${TF_VAR_tf_backend_storage_account_name}" \
     -backend-config="container_name=${TF_VAR_tf_backend_container_name}" \
     -backend-config="client_secret=${backend_client_secret}" \
-    "${scripts_path}/../${terraform_module}"
+    "${init_sh_script_path}/../${terraform_module}"

@@ -43,10 +43,10 @@ data "terraform_remote_state" "remote_state_rbac" {
 
 ######################################################################### RESOURCES
 resource "azurerm_kubernetes_cluster" "kubernetes_cluster" {
-  name                = "${var.prefix}-aks-cluster-${var.suffix}"
+  name                = "${var.prefix}-aks-cluster-${terraform.workspace}"
   location            = var.region
   resource_group_name = data.terraform_remote_state.remote_state_core.outputs.resource_group_name
-  dns_prefix          = "${var.prefix}-aks-cluster-${var.suffix}"
+  dns_prefix          = "${var.prefix}-aks-cluster-${terraform.workspace}"
 
   agent_pool_profile {
     name                = "default"
