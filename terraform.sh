@@ -28,8 +28,8 @@ while [ $# -gt 0 ]; do
 done
 
 # Ensure required arguments
-if [ -z $terraform_action ]; then
-    echo "Please pass the terraform action name with --action=apply/destroy .."
+if [ -z $terraform_action ] || ! [[ "$terraform_action" =~ ^(apply|destroy|init)$ ]]; then
+    echo "Please pass the terraform action name with --action=apply/destroy/init .."
     exit 1
 fi
 if [ -z $terraform_module ] || ! [[ "$terraform_module" =~ ^(core|rbac|aks|tme)$ ]]; then
@@ -52,5 +52,8 @@ terraform_sh_script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>
 # Terraform init
 source "${terraform_sh_script_path}/terraform/shared/init.sh" $terraform_module
 
-terraform "${terraform_action}" -auto-approve -var-file="${terraform_sh_script_path}/terraform_${terraform_module}.tfvars" "${terraform_sh_script_path}/terraform/${terraform_module}"
+if [[ $terraform_action == "init" ]]; then
+    exit 0
+fi
 
+terraform "${terraform_action}" -auto-approve -var-file="${terraform_sh_script_path}/terraform_${terraform_module}.tfvars" "${terraform_sh_script_path}/terraform/${terraform_module}"
