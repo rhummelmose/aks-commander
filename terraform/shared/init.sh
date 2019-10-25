@@ -75,6 +75,7 @@ fi
 
 # Terraform
 terraform init \
+    -reconfigure \
     -backend-config="tenant_id=${TF_VAR_tf_backend_tenant_id}" \
     -backend-config="client_id=${TF_VAR_tf_backend_client_id}" \
     -backend-config="subscription_id=${TF_VAR_tf_backend_subscription_id}" \
