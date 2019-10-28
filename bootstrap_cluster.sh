@@ -41,10 +41,10 @@ source "${bootstrap_cluster_sh_script_path}/terraform/shared/init.sh" "aks"
 
 # Get resource group and cluster name
 terraform workspace select $terraform_workspace
-terraform state pull
-
-exit 0
-
+terraform state pull > bootstrap_cluster_sh_terraform_aks_remote_state
+cluster_name=$(cat bootstrap_cluster_sh_terraform_aks_remote_state | jq --raw-output '.outputs.cluster_name.value')
+resource_group=$(cat bootstrap_cluster_sh_terraform_aks_remote_state | jq --raw-output '.outputs.cluster_resource_group_name.value')
+rm bootstrap_cluster_sh_terraform_aks_remote_state
 
 # Get kubectl credentials for cluster from Azure CLI
 declare get_credentials_output
@@ -56,17 +56,17 @@ if [ $? -ne 0 ]; then
 fi
 
 # Apply API resources
-kubectl apply -f "${bootstrap_cluster_sh_script_path}/resources/bootstrap_cluster/rbac.yml" &> bootstrap_cluster.out
-kubectl apply -f "${bootstrap_cluster_sh_script_path}/resources/bootstrap_cluster/namespaces.yml" &> bootstrap_cluster.out
+kubectl apply -f "${bootstrap_cluster_sh_script_path}/resources/bootstrap_cluster/rbac.yml"
+kubectl apply -f "${bootstrap_cluster_sh_script_path}/resources/bootstrap_cluster/namespaces.yml"
 
 # Install Helm charts
 nginx_ingress_namespace="nginx-ingress"
-helm3 install nginx-ingress stable/nginx-ingress --namespace $nginx_ingress_namespace &> bootstrap_cluster.out
+helm3 install nginx-ingress stable/nginx-ingress --namespace $nginx_ingress_namespace
 
 # Export provisioned ingress public IP
 declare provisioned_ingress_public_ip
 export_provisioned_ingress_public_ip () {
-    echo "Exporting provisioned ingress public IP.." &> bootstrap_cluster.out
+    echo "Exporting provisioned ingress public IP.."
     local max_retries=10
     local sleep_seconds_between_retries=5
     local retry_counter=0
@@ -84,13 +84,13 @@ export_provisioned_ingress_public_ip () {
             echo "Exiting.."
             exit 1
         elif [ $success -ne 0 ] || [ -z $output  ] && [ $max_retries_exceeded -ne 0 ]; then
-            echo "Failed to export provisioned ingress public ip. Retrying in ${sleep_seconds_between_retries} seconds.." &> bootstrap_cluster.out
+            echo "Failed to export provisioned ingress public ip. Retrying in ${sleep_seconds_between_retries} seconds.."
             retry_counter=$(expr $retry_counter + 1)
             sleep "${sleep_seconds_between_retries}s"
             continue
         fi
         provisioned_ingress_public_ip="$output"
-        echo "Successfully got provisioned ingress public IP ${provisioned_ingress_public_ip}.." &> bootstrap_cluster.out
+        echo "Successfully got provisioned ingress public IP ${provisioned_ingress_public_ip}.."
         break
     done
 }

@@ -7,14 +7,6 @@ variable "prefix" {
   type = string
 }
 
-variable "region" {
-  type = string
-}
-
-variable "target" {
-  type = string
-}
-
 ### TERRAFORM BACKEND
 variable "tf_backend_tenant_id" {
   type = string
