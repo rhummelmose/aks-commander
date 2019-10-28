@@ -57,6 +57,7 @@ else
     azure_cli_target_subscription=$TF_VAR_subscription_id
 fi
 
+echo "Set Azure CLI account.."
 az account set --subscription $azure_cli_target_subscription
 
 # If we're running on Azure DevOps, we have to get credentials from env vars
@@ -74,6 +75,7 @@ if [ ! -z $tenantId ]; then
 fi
 
 # Terraform
+echo "Do Terraform init.."
 terraform init \
     -reconfigure \
     -backend-config="tenant_id=${TF_VAR_tf_backend_tenant_id}" \

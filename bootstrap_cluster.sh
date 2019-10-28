@@ -3,33 +3,48 @@
 # Exit if anything breaks
 set -e
 
-resource_group=$1
-cluster_name=$2
+# Arguments
+terraform_workspace=$1
+
+# Ensure portability
+echo "Ensure portability.."
 bootstrap_cluster_sh_script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # Verify arguments
-if [ -z $resource_group ]; then
-    echo "Resource group required as 1st parameter.."
-    exit 1
-fi
-
-if [ -z $cluster_name ]; then
-    echo "Cluster name required as 2nd parameter.."
+echo "Verify arguments.."
+if [ -z $terraform_workspace ]; then
+    echo "Terraform workspace is required as 1st parameter.."
     exit 1
 fi
 
 # Verify dependencies
-kubectl version >> /dev/null
+echo "Verify dependencies.."
+kubectl version --client
 if [ $? -ne 0 ]; then
     echo "kubectl required on PATH.."
     exit 1
 fi
 
-helm3 version >> /dev/null
+helm3 version
 if [ $? -ne 0 ]; then
     echo "helm3 required on PATH.."
     exit 1
 fi
+
+# Move to aks module directory (required for terraform state command)
+echo "Move into aks module directory.."
+cd "${bootstrap_cluster_sh_script_path}/terraform/aks"
+
+# Terraform init
+echo "Run init script.."
+source "${bootstrap_cluster_sh_script_path}/terraform/shared/init.sh" "aks"
+
+# Get resource group and cluster name
+terraform workspace select $terraform_workspace
+terraform state pull
+
+exit 0
+
 
 # Get kubectl credentials for cluster from Azure CLI
 declare get_credentials_output
