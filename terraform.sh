@@ -57,7 +57,7 @@ fi
 # Source the terraform workspace from env if not passed as argument
 if [ -z $terraform_workspace ] && [ ! -z $AKSCOMM_TF_WORKSPACE ]; then
     terraform_workspace=$AKSCOMM_TF_WORKSPACE
-elif [ -z $terraform_workspace ]
+elif [ -z $terraform_workspace ]; then
     terraform_workspace="default"
 fi
 export TF_WORKSPACE=$terraform_workspace
