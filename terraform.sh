@@ -27,8 +27,10 @@ while [ $# -gt 0 ]; do
   shift
 done
 
-# Debug
-printf '$terraform_workspace = %s\n' $terraform_workspace
+# On Azure DevOps queue time variables are not substituted with empty values if not set
+if [ $terraform_workspace == '$(terraform-workspace)' ]; then
+    unset terraform_workspace
+fi
 
 # Ensure required arguments
 if [ -z $terraform_action ] || ! [[ "$terraform_action" =~ ^(apply|destroy|init)$ ]]; then
