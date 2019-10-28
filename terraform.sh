@@ -27,6 +27,9 @@ while [ $# -gt 0 ]; do
   shift
 done
 
+# Debug
+printf '$terraform_workspace = %s\n' $terraform_workspace
+
 # Ensure required arguments
 if [ -z $terraform_action ] || ! [[ "$terraform_action" =~ ^(apply|destroy|init)$ ]]; then
     echo "Please pass the terraform action name with --action=apply/destroy/init .."
