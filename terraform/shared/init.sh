@@ -74,9 +74,9 @@ if [ ! -z $tenantId ]; then
     export ARM_SUBSCRIPTION_ID=$(az account show --query 'id' --output tsv)
 fi
 
-# Terraform
+# Terraform (Pass 1 to init due to: https://github.com/hashicorp/terraform/issues/21393)
 echo "Do Terraform init.."
-terraform init \
+echo '1' | terraform init \
     -reconfigure \
     -backend-config="tenant_id=${TF_VAR_tf_backend_tenant_id}" \
     -backend-config="client_id=${TF_VAR_tf_backend_client_id}" \

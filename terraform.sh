@@ -74,7 +74,7 @@ fi
 
 unset TF_WORKSPACE
 if [ ! -z $terraform_workspace ]; then
-    terraform workspace select -input=false $terraform_workspace "${terraform_sh_script_path}/terraform/${terraform_module}" || terraform workspace new $terraform_workspace "${terraform_sh_script_path}/terraform/${terraform_module}"
+    terraform workspace select $terraform_workspace "${terraform_sh_script_path}/terraform/${terraform_module}" || terraform workspace new $terraform_workspace "${terraform_sh_script_path}/terraform/${terraform_module}"
 fi
 
 terraform "${terraform_action}" -auto-approve -var-file="${terraform_sh_script_path}/terraform_${terraform_module}.tfvars" "${terraform_sh_script_path}/terraform/${terraform_module}"
