@@ -1,10 +1,9 @@
-# output "traffic_manager_endpoint_name" {
-#   value = azurerm_traffic_manager_endpoint.traffic_manager_endpoint.name
-# }
+output "traffic_manager_endpoint_name" {
+  value = azurerm_traffic_manager_endpoint.traffic_manager_endpoint.name
+}
 
 output "traffic_manager_endpoint_target" {
-  #value = azurerm_traffic_manager_endpoint.traffic_manager_endpoint.target
-  value = data.external.kubernetes_cluster_ingress_ip.result.kubernetes_ingress_ip
+  value = azurerm_traffic_manager_endpoint.traffic_manager_endpoint.target
 }
 
 output "traffic_manager_endpoint_workspace" {

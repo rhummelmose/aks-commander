@@ -28,6 +28,7 @@ data "terraform_remote_state" "remote_state_core" {
 
 data "terraform_remote_state" "remote_state_aks" {
   backend = "azurerm"
+  workspace = terraform.workspace
 
   config = {
     tenant_id            = var.tf_backend_tenant_id
@@ -42,14 +43,14 @@ data "terraform_remote_state" "remote_state_aks" {
 }
 
 ######################################################################### RESOURCES
-# resource "azurerm_traffic_manager_endpoint" "traffic_manager_endpoint" {
-#   name                = "${var.prefix}-traffic-manager-endpoint-${terraform.workspace}"
-#   resource_group_name = data.terraform_remote_state.remote_state_core.outputs.resource_group_name
-#   profile_name        = data.terraform_remote_state.remote_state_core.outputs.traffic_manager_profile_name
-#   target              = var.target
-#   type                = "externalEndpoints"
-#   priority            = 10
-# }
+resource "azurerm_traffic_manager_endpoint" "traffic_manager_endpoint" {
+  name                = "${var.prefix}-traffic-manager-endpoint-${terraform.workspace}"
+  resource_group_name = data.terraform_remote_state.remote_state_core.outputs.resource_group_name
+  profile_name        = data.terraform_remote_state.remote_state_core.outputs.traffic_manager_profile_name
+  target              = data.external.kubernetes_cluster_ingress_ip.result.kubernetes_ingress_ip
+  type                = "externalEndpoints"
+  priority            = 10
+}
 
 ######################################################################### DATA
 
@@ -58,7 +59,7 @@ data "external" "kubernetes_cluster_ingress_ip" {
 
   query = {
     workspace = terraform.workspace,
-    aks_cluster_name = data.terraform_remote_state.remote_state_aks.outputs.name,
-    aks_resource_group_name = data.terraform_remote_state.remote_state_aks.outputs.resource_group_name
+    aks_cluster_name = data.terraform_remote_state.remote_state_aks.outputs.cluster_name,
+    aks_cluster_resource_group_name = data.terraform_remote_state.remote_state_aks.outputs.cluster_resource_group_name
   }
 }

@@ -48,7 +48,7 @@ rm bootstrap_cluster_sh_terraform_aks_remote_state
 
 # Get kubectl credentials for cluster from Azure CLI
 declare get_credentials_output
-get_credentials_output=$(az aks get-credentials --resource-group $resource_group --name $cluster_name --admin)
+get_credentials_output=$(az aks get-credentials --overwrite-existing --resource-group $resource_group --name $cluster_name --admin)
 if [ $? -ne 0 ]; then
     echo "Failed to get administrative credentials for kubectl.."
     printf "Error: %s\n" $get_credentials_output
