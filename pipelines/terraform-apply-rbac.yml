@@ -24,7 +24,7 @@ stages:
         scriptPath: terraform.sh
         scriptArguments: "--action=apply --module=rbac --backend-secret=$(AKSCOMM_TF_BACKEND_CLIENT_SECRET) --workspace=$(terraform-workspace)"
         addSpnToEnvironment: true
-- stage: grant-admin-consent
+- stage: grant_admin_consent
   displayName: Grant admin consent
   jobs:  
   - deployment: grant_admin_consent
