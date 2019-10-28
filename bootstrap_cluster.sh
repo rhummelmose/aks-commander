@@ -5,6 +5,7 @@ set -e
 
 # Arguments
 terraform_workspace=$1
+terraform_backend_secret=$2
 
 # Ensure portability
 echo "Ensure portability.."
@@ -12,10 +13,13 @@ bootstrap_cluster_sh_script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev
 
 # Verify arguments
 echo "Verify arguments.."
-if [ -z $terraform_workspace ]; then
+if [ -z $terraform_workspace ] || [[ $terraform_workspace == "$(terraform-workspace)" ]]; then
     echo "Terraform workspace is required as 1st parameter.."
     exit 1
 fi
+
+# Grab service principal secret (if passed as argument, used for Terraform's Azure storage account backend and set in env)
+source "$bootstrap_cluster_sh_script_path/terraform/shared/source_backend_secret.sh"
 
 # Verify dependencies
 echo "Verify dependencies.."

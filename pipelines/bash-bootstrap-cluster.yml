@@ -22,5 +22,5 @@ stages:
         azureSubscription: arm-service-connection-rh-subcription-vse-950dkk
         scriptType: bash
         scriptPath: bootstrap_cluster.sh
-        scriptArguments: "$(terraform-workspace)"
+        scriptArguments: "$(terraform-workspace) $(AKSCOMM_TF_BACKEND_CLIENT_SECRET)"
         addSpnToEnvironment: true
