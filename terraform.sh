@@ -37,6 +37,9 @@ if [ -z $terraform_module ] || ! [[ "$terraform_module" =~ ^(core|rbac|aks|tme)$
     exit 1
 fi
 
+# Get automation suitable output from Terraform
+export TF_IN_AUTOMATION=true
+
 # Grab service principal secret (if passed as argument, used for Terraform's Azure storage account backend and set in env)
 if [ ! -z $terraform_backend_secret ]; then
     export AKSCOMM_TF_BACKEND_CLIENT_SECRET=$terraform_backend_secret
@@ -47,9 +50,12 @@ if [ -z $AKSCOMM_TF_BACKEND_CLIENT_SECRET ]; then
 fi
 
 # Source the terraform workspace from env if not passed as argument
-if [ -z $terraform_workspace ]; then
+if [ -z $terraform_workspace ] && [ ! -z $AKSCOMM_TF_WORKSPACE ]; then
     terraform_workspace=$AKSCOMM_TF_WORKSPACE
+else
+    terraform_workspace="default"
 fi
+export TF_WORKSPACE=$terraform_workspace
 
 # Ensure portability
 terraform_sh_script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -61,6 +67,7 @@ if [[ $terraform_action == "init" ]]; then
     exit 0
 fi
 
+unset TF_WORKSPACE
 if [ ! -z $terraform_workspace ]; then
     terraform workspace select $terraform_workspace "${terraform_sh_script_path}/terraform/${terraform_module}" || terraform workspace new $terraform_workspace "${terraform_sh_script_path}/terraform/${terraform_module}"
 fi
