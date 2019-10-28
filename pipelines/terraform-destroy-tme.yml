@@ -9,10 +9,10 @@ variables:
 
 stages:
 - stage: destroy
-  displayName: Destroy core infrastructure
+  displayName: Destroy Traffic Manager endpoint
   jobs:  
   - job: destroy
-    displayName: Destroy core infrastructure
+    displayName: Destroy Traffic Manager endpoint
     pool:
       vmImage: "ubuntu-latest"
     steps:
@@ -22,5 +22,5 @@ stages:
         azureSubscription: arm-service-connection-rh-subcription-vse-950dkk
         scriptType: bash
         scriptPath: terraform.sh
-        scriptArguments: "--action=destroy --module=tme --backend-secret=$(AKSCOMM_TF_BACKEND_CLIENT_SECRET)"
+        scriptArguments: "--action=destroy --module=tme --backend-secret=$(AKSCOMM_TF_BACKEND_CLIENT_SECRET) --workspace=$(terraform-workspace)"
         addSpnToEnvironment: true

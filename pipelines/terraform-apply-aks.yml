@@ -8,11 +8,11 @@ variables:
 - group: "terraform-backend"
 
 stages:
-- stage: provision
-  displayName: Provision core infrastructure
+- stage: apply
+  displayName: Apply AKS cluster
   jobs:  
-  - job: provision
-    displayName: Provision core infrastructure
+  - job: apply
+    displayName: Apply AKS cluster
     pool:
       vmImage: "ubuntu-latest"
     steps:
@@ -22,5 +22,5 @@ stages:
         azureSubscription: arm-service-connection-rh-subcription-vse-950dkk
         scriptType: bash
         scriptPath: terraform.sh
-        scriptArguments: "--action=apply --module=aks --backend-secret=$(AKSCOMM_TF_BACKEND_CLIENT_SECRET)"
+        scriptArguments: "--action=apply --module=aks --backend-secret=$(AKSCOMM_TF_BACKEND_CLIENT_SECRET) --workspace=$(terraform-workspace)"
         addSpnToEnvironment: true
