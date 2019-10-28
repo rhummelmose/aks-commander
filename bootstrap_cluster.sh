@@ -13,7 +13,7 @@ bootstrap_cluster_sh_script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev
 
 # Verify arguments
 echo "Verify arguments.."
-if [ -z $terraform_workspace ] || [[ $terraform_workspace == "$(terraform-workspace)" ]]; then
+if [ -z $terraform_workspace ] || [[ "$terraform_workspace" == '$(terraform-workspace)' ]]; then
     echo "Terraform workspace is required as 1st parameter.."
     exit 1
 fi
