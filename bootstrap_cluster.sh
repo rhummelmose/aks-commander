@@ -7,6 +7,7 @@ resource_group=$1
 cluster_name=$2
 bootstrap_cluster_sh_script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+# Verify arguments
 if [ -z $resource_group ]; then
     echo "Resource group required as 1st parameter.."
     exit 1
@@ -17,6 +18,7 @@ if [ -z $cluster_name ]; then
     exit 1
 fi
 
+# Verify dependencies
 kubectl version >> /dev/null
 if [ $? -ne 0 ]; then
     echo "kubectl required on PATH.."
@@ -29,6 +31,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# Get kubectl credentials for cluster from Azure CLI
 declare get_credentials_output
 get_credentials_output=$(az aks get-credentials --resource-group $resource_group --name $cluster_name --admin)
 if [ $? -ne 0 ]; then
