@@ -28,7 +28,7 @@ while [ $# -gt 0 ]; do
 done
 
 # On Azure DevOps queue time variables are not substituted with empty values if not set
-if [ $terraform_workspace == '$(terraform-workspace)' ]; then
+if [[ $terraform_workspace == '$(terraform-workspace)' ]]; then
     unset terraform_workspace
 fi
 
