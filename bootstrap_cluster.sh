@@ -29,10 +29,22 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-helm3 version
+declare helm3_version_output
+helm3_version_output=$(helm3 version)
 if [ $? -ne 0 ]; then
-    echo "helm3 required on PATH.."
-    exit 1
+    echo "helm3 required on PATH.. Installing if on Linux.."
+    # Install Helm v3.0.0-beta.5 if on Linux
+    if [[ $(uname) == *"Linux"* ]]; then
+        mkdir bootstrap_cluster_sh_helm3_install
+        cd bootstrap_cluster_sh_helm3_install
+        wget --quiet --output-document="helm3.tar.gz" "https://get.helm.sh/helm-v3.0.0-beta.5-linux-amd64.tar.gz"
+        tar -xvf helm3.tar.gz
+        sudo mv linux-amd64/helm /usr/local/bin/helm3
+        cd ..
+        rm -r bootstrap_cluster_sh_helm3_install
+    else
+        exit 0
+    fi
 fi
 
 # Move to aks module directory (required for terraform state command)
