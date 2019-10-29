@@ -74,6 +74,7 @@ kubectl apply -f "${bootstrap_cluster_sh_script_path}/resources/bootstrap_cluste
 
 # Install Helm charts
 nginx_ingress_namespace="nginx-ingress"
+helm3 repo update
 helm3 install nginx-ingress stable/nginx-ingress --namespace $nginx_ingress_namespace
 
 # Export provisioned ingress public IP
