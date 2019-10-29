@@ -44,8 +44,6 @@ if [ $? -ne 0 ]; then
     fi
 fi
 
-exit 0
-
 # Move to aks module directory (required for terraform state command)
 echo "Move into aks module directory.."
 cd "${bootstrap_cluster_sh_script_path}/terraform/aks"
