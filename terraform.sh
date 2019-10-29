@@ -51,6 +51,9 @@ source "$terraform_sh_script_path/terraform/shared/source_backend_secret.sh"
 # Source the terraform workspace from env if not passed as argument
 if [ -z $terraform_workspace ] && [ ! -z $AKSCOMM_TF_WORKSPACE ]; then
     terraform_workspace=$AKSCOMM_TF_WORKSPACE
+elif [ -z $terraform_workspace ] && [[ "$terraform_module" =~ ^(aks|tme)$ ]]; then
+    echo "Terraform workspace parameter is required for moodules aks and tme.."
+    exit 1
 elif [ -z $terraform_workspace ]; then
     terraform_workspace="default"
 fi

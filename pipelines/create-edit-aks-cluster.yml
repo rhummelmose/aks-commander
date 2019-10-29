@@ -11,8 +11,8 @@ stages:
 - stage: terraform_apply_aks_cluster
   displayName: Terraform apply AKS cluster
   jobs:  
-  - job: terraform_apply_aks_cluster
-    displayName: Terraform apply AKS cluster
+  - job: run_bash
+    displayName: Run bash
     pool:
       vmImage: "ubuntu-latest"
     steps:
@@ -27,8 +27,8 @@ stages:
 - stage: bootstrap_aks_cluster
   displayName: Bootstrap AKS cluster
   jobs:  
-  - job: bootstrap_aks_cluster
-    displayName: Bootstrap AKS cluster
+  - job: run_bash
+    displayName: Run bash
     pool:
       vmImage: "ubuntu-latest"
     steps:
@@ -43,8 +43,8 @@ stages:
 - stage: terraform_apply_traffic_manager_endpoint
   displayName: Terraform apply Traffic Manager endpoint
   jobs:  
-  - job: terraform_apply_traffic_manager_endpoint
-    displayName: Terraform apply Traffic Manager endpoint
+  - job: run_bash
+    displayName: Run bash
     pool:
       vmImage: "ubuntu-latest"
     steps:

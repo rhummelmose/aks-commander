@@ -11,8 +11,8 @@ stages:
 - stage: terraform_destroy_traffic_manager_endpoint
   displayName: Terraform destroy Traffic Manager endpoint
   jobs:  
-  - job: terraform_destroy_traffic_manager_endpoint
-    displayName: Terraform destroy Traffic Manager endpoint
+  - job: run_bash
+    displayName: Run bash
     pool:
       vmImage: "ubuntu-latest"
     steps:
@@ -27,8 +27,8 @@ stages:
 - stage: terraform_destroy_aks_cluster
   displayName: Terraform destroy AKS cluster
   jobs:  
-  - job: terraform_destroy_aks_cluster
-    displayName: Terraform destroy AKS cluster
+  - job: run_bash
+    displayName: Run bash
     pool:
       vmImage: "ubuntu-latest"
     steps:
