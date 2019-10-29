@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Exit if anything breaks
-set -e
-
 # Arguments
 terraform_workspace=$1
 terraform_backend_secret=$2
@@ -43,9 +40,11 @@ if [ $? -ne 0 ]; then
         cd ..
         rm -r bootstrap_cluster_sh_helm3_install
     else
-        exit 0
+        exit 1
     fi
 fi
+
+exit 0
 
 # Move to aks module directory (required for terraform state command)
 echo "Move into aks module directory.."
