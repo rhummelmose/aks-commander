@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Exit if anything breaks
-set -e
-
 # Get terraform relative path
 terraform_module=$1
 
