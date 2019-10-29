@@ -1,0 +1,58 @@
+trigger:
+- none
+
+resources:
+- repo: self
+
+variables:
+- group: "terraform-backend"
+
+stages:
+- stage: terraform_apply_aks_cluster
+  displayName: Terraform apply AKS cluster
+  jobs:  
+  - job: terraform_apply_aks_cluster
+    displayName: Terraform apply AKS cluster
+    pool:
+      vmImage: "ubuntu-latest"
+    steps:
+    - task: AzureCLI@2
+      displayName: Azure CLI
+      inputs:
+        azureSubscription: arm-service-connection-rh-subcription-vse-950dkk
+        scriptType: bash
+        scriptPath: terraform.sh
+        scriptArguments: "--action=apply --module=aks --backend-secret=$(AKSCOMM_TF_BACKEND_CLIENT_SECRET) --workspace=$(terraform-workspace)"
+        addSpnToEnvironment: true
+- stage: bootstrap_aks_cluster
+  displayName: Bootstrap AKS cluster
+  jobs:  
+  - job: bootstrap_aks_cluster
+    displayName: Bootstrap AKS cluster
+    pool:
+      vmImage: "ubuntu-latest"
+    steps:
+    - task: AzureCLI@2
+      displayName: Azure CLI
+      inputs:
+        azureSubscription: arm-service-connection-rh-subcription-vse-950dkk
+        scriptType: bash
+        scriptPath: bootstrap_cluster.sh
+        scriptArguments: "$(terraform-workspace) $(AKSCOMM_TF_BACKEND_CLIENT_SECRET)"
+        addSpnToEnvironment: true
+- stage: terraform_apply_traffic_manager_endpoint
+  displayName: Terraform apply Traffic Manager endpoint
+  jobs:  
+  - job: terraform_apply_traffic_manager_endpoint
+    displayName: Terraform apply Traffic Manager endpoint
+    pool:
+      vmImage: "ubuntu-latest"
+    steps:
+    - task: AzureCLI@2
+      displayName: Azure CLI
+      inputs:
+        azureSubscription: arm-service-connection-rh-subcription-vse-950dkk
+        scriptType: bash
+        scriptPath: terraform.sh
+        scriptArguments: "--action=apply --module=tme --backend-secret=$(AKSCOMM_TF_BACKEND_CLIENT_SECRET) --workspace=$(terraform-workspace)"
+        addSpnToEnvironment: true

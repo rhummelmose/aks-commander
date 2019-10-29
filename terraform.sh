@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Exit if anything breaks
-set -e
-
 # Ensure portability
 terraform_sh_script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
