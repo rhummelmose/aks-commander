@@ -38,7 +38,7 @@ resource "azurerm_traffic_manager_profile" "traffic_manager_profile" {
   name                = "${var.prefix}-traffic-manager-profile"
   resource_group_name = azurerm_resource_group.resource_group.name
 
-  traffic_routing_method = "Priority"
+  traffic_routing_method = "Weighted"
 
   dns_config {
     relative_name = "${replace(var.subdomain, ".", "-")}-${replace(var.domain, ".", "-")}"

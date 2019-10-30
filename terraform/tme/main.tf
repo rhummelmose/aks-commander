@@ -49,7 +49,6 @@ resource "azurerm_traffic_manager_endpoint" "traffic_manager_endpoint" {
   profile_name        = data.terraform_remote_state.remote_state_core.outputs.traffic_manager_profile_name
   target              = data.external.kubernetes_cluster_ingress_ip.result.kubernetes_ingress_ip
   type                = "externalEndpoints"
-  priority            = 10
 }
 
 ######################################################################### DATA
