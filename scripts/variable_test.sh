@@ -3,7 +3,11 @@
 resource_group=$1
 cluster_name=$2
 namespace=$3
-deployment_targets=$AKSCOMM_DEPLOYMENT_TARGETS
+deployment_targets=$4
+
+if [ -z $deployment_targets ]; then
+    deployment_targets=$AKSCOMM_DEPLOYMENT_TARGETS
+fi
 
 if [ -z $resource_group ] || [[ "$resource_group" == '$(resource-group)' ]]; then
     echo "Resource group required as 1st argument.."

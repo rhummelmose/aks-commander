@@ -22,5 +22,5 @@ stages:
         azureSubscription: arm-service-connection-rh-subcription-vse-950dkk
         scriptType: bash
         scriptPath: scripts/variable_test.sh
-        scriptArguments: "$(resource-group) $(cluster-name) $(namespace)"
+        scriptArguments: "$(resource-group) $(cluster-name) $(namespace) $(AKSCOMM_DEPLOYMENT_TARGETS)"
         addSpnToEnvironment: true
