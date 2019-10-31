@@ -6,6 +6,7 @@ resources:
 
 variables:
 - group: "deployment-configuration"
+- group: "tokens"
 
 stages:
 - stage: terraform
@@ -22,5 +23,5 @@ stages:
         azureSubscription: arm-service-connection-rh-subcription-vse-950dkk
         scriptType: bash
         scriptPath: scripts/variable_test.sh
-        scriptArguments: "$(resource-group) $(cluster-name) $(namespace) $(AKSCOMM_DEPLOYMENT_TARGETS)"
+        scriptArguments: "$(resource-group) $(cluster-name) $(namespace) $(AKSCOMM_DEPLOYMENT_TARGETS) $(AZURE_DEVOPS_EXT_PAT)"
         addSpnToEnvironment: true
