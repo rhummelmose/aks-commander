@@ -21,20 +21,25 @@ if [ -z $namespace ] || [[ "$namespace" == '$(namespace)' ]]; then
     exit 1
 fi
 
+if [ -z $deployment_targets ]; then
+    deployment_targets=$(echo [] | jq 'tojson')
+fi
+
 declare deployment_targets_json_type
-deployment_targets_json_type=$(echo "$deployment_targets" | sed 's@\\@@g' | jq --raw-output 'type')
+deployment_targets_json_type=$(echo $deployment_targets | jq --raw-output 'fromjson | type')
 if [ $? -ne 0 ] || [[ $deployment_targets_json_type != "array" ]]; then
     printf "Invalid deployment targets passed as 4th arrgument: %q ..\n" "$deployment_targets"
     exit 1
 fi
-exit 0
+
 if [ -z $azure_devops_pat ]; then
     echo "Azure DevOps PAT required as 5th argument.."
     exit 1
 fi
 
-new_variable_value=$(echo $deployment_targets | jq --compact-output '. += [{"resource-group": "'$resource_group'", "cluster-name": "'$cluster_name'", "namespace": "'$namespace'"}]')
-
+new_variable_value=$(echo $deployment_targets | jq --compact-output 'fromjson | . += [{"resource-group": "'$resource_group'", "cluster-name": "'$cluster_name'", "namespace": "'$namespace'"}] | tojson')
+echo $new_variable_value
+exit 0
 # Credentials
 export AZURE_DEVOPS_EXT_PAT=$azure_devops_pat
 
