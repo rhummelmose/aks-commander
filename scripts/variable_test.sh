@@ -27,7 +27,7 @@ if [ $? -ne 0 ] || [[ $deployment_targets_json_type != "array" ]]; then
     printf "Invalid deployment targets passed as 4th arrgument: %q ..\n" "$deployment_targets"
     exit 1
 fi
-
+exit 0
 if [ -z $azure_devops_pat ]; then
     echo "Azure DevOps PAT required as 5th argument.."
     exit 1
