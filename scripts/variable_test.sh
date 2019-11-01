@@ -22,7 +22,7 @@ if [ -z $namespace ] || [[ "$namespace" == '$(namespace)' ]]; then
 fi
 
 declare deployment_targets_json_type
-deployment_targets_json_type=$(echo "$deployment_targets" | jq --raw-output 'type')
+deployment_targets_json_type=$(echo "$deployment_targets" | | sed 's@\\@@g' | jq --raw-output 'type')
 if [ $? -ne 0 ] || [[ $deployment_targets_json_type != "array" ]]; then
     printf "Invalid deployment targets passed as 4th arrgument: %q ..\n" "$deployment_targets"
     exit 1
