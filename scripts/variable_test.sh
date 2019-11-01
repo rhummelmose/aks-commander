@@ -33,7 +33,7 @@ if [ -z $azure_devops_pat ]; then
     exit 1
 fi
 
-new_variable_value=$(echo $deployment_targets | jq --compact-output --raw-output '. += [{"resource-group": "'$resource_group'", "cluster-name": "'$cluster_name'", "namespace": "'$namespace'"}]')
+new_variable_value=$(echo $deployment_targets | jq --compact-output '. += [{"resource-group": "'$resource_group'", "cluster-name": "'$cluster_name'", "namespace": "'$namespace'"}]')
 
 # Credentials
 export AZURE_DEVOPS_EXT_PAT=$azure_devops_pat
