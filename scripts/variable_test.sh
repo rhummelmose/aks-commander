@@ -41,4 +41,5 @@ export AZURE_DEVOPS_EXT_PAT=$azure_devops_pat
 # Ensure the Azure DevOps extension is installed
 az extension add --name azure-devops
 
-az pipelines variable-group variable update --organization "https://dev.azure.com/rhummelmose" --project aks-commander --group-id 3 --name AKSCOMM_DEPLOYMENT_TARGETS --value "$new_variable_value"
+variable_group_id=$(az pipelines variable-group list --organization $SYSTEM_TEAMFOUNDATIONCOLLECTIONURI --project $SYSTEM_TEAMPROJECT | jq '.[] | select(.name == "deployment-configuration") | .id')
+az pipelines variable-group variable update --organization $SYSTEM_TEAMFOUNDATIONCOLLECTIONURI --project $SYSTEM_TEAMPROJECT --group-id $variable_group_id --name AKSCOMM_DEPLOYMENT_TARGETS --value "$new_variable_value"
