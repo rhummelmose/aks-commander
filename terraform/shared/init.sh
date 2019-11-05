@@ -7,7 +7,7 @@ terraform_module=$1
 init_sh_script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # Install Terraform 0.12.12 if on Linux
-if [[ $(uname) == *"Linux"* ]] && [[ $(terraform version) != *"v0.12.12"* ]]; then
+if [[ $(uname) == *"Linux"* ]] && [[ $(terraform version) != *"v0.12.13"* ]]; then
     mkdir temp_terraform_install
     cd temp_terraform_install
     wget --quiet --output-document="terraform.zip" "https://releases.hashicorp.com/terraform/0.12.12/terraform_0.12.12_linux_amd64.zip"
