@@ -23,5 +23,5 @@ stages:
         azureSubscription: arm-service-connection-rh-subcription-vse-950dkk
         scriptType: bash
         scriptPath: scripts/add_remove_deployment_target.sh
-        scriptArguments: "$(action) deployment-configuration AKSCOMM_DEPLOYMENT_TARGETS $(resource-group) $(cluster-name) $(namespace) $(AZURE_DEVOPS_EXT_PAT)"
+        scriptArguments: "$(action) deployment-configuration $(variable-name) $(resource-group) $(cluster-name) $(namespace) $(AZURE_DEVOPS_EXT_PAT)"
         addSpnToEnvironment: true
