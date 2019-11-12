@@ -57,6 +57,11 @@ echo "Variable group id: $variable_group_id"
 old_variable_value=$(az pipelines variable-group variable list --organization $SYSTEM_TEAMFOUNDATIONCOLLECTIONURI --project $SYSTEM_TEAMPROJECT --group-id $variable_group_id | jq --raw-output ".$variable_name.value")
 echo "Old variable value: $old_variable_value"
 
+# Default to empty array on null value
+if [ -z $old_variable_value ]; then
+    old_variable_value='"[]"'
+fi
+
 # Calculate new variable value
 new_variable_value=$old_variable_value
 if [[ $action == "add" ]]; then
