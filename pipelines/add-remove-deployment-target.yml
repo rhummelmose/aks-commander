@@ -9,7 +9,7 @@ variables:
 - group: "tokens"
 
 stages:
-- stage: terraform
+- stage: Add/remove deployment target
   displayName: Terraform
   jobs:  
   - job: run_bash

@@ -73,4 +73,4 @@ fi
 echo "New variable value: $new_variable_value"
 
 # Set new variable value
-az pipelines variable-group variable update --organization $SYSTEM_TEAMFOUNDATIONCOLLECTIONURI --project $SYSTEM_TEAMPROJECT --group-id $variable_group_id --name AKSCOMM_DEPLOYMENT_TARGETS --value "$new_variable_value"
+az pipelines variable-group variable update --organization $SYSTEM_TEAMFOUNDATIONCOLLECTIONURI --project $SYSTEM_TEAMPROJECT --group-id $variable_group_id --name $variable_name --value "$new_variable_value"
