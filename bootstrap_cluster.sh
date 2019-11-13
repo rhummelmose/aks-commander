@@ -3,7 +3,6 @@
 # Arguments
 terraform_environment=$1
 terraform_workspace=$2
-terraform_backend_secret=$3
 
 # Ensure portability
 echo "Ensure portability.."
@@ -11,7 +10,7 @@ bootstrap_cluster_sh_script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev
 
 # Verify arguments
 echo "Verify arguments.."
-if [ -z $terraform_environment ] || [ ! -d "${terraform_sh_script_path}/environments/${terraform_environment}" ]; then
+if [ -z $terraform_environment ] || [ ! -d "${bootstrap_cluster_sh_script_path}/environments/${terraform_environment}" ]; then
     echo "Please pass an existing environment with --environment=<environment>.."
     exit 1
 fi
@@ -21,7 +20,7 @@ if [ -z $terraform_workspace ] || [[ "$terraform_workspace" == '$(terraform-work
 fi
 
 # Grab service principal secret (if passed as argument, used for Terraform's Azure storage account backend and set in env)
-source "$bootstrap_cluster_sh_script_path/terraform/shared/source_backend_secret.sh"
+# source "$bootstrap_cluster_sh_script_path/terraform/shared/source_backend_secret.sh"
 
 # Verify dependencies
 echo "Verify dependencies.."
