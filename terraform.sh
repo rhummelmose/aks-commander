@@ -6,6 +6,9 @@ terraform_sh_script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>
 # Collect arguments
 while [ $# -gt 0 ]; do
   case "$1" in
+    --environment=*)
+      terraform_environment="${1#*=}"
+      ;;
     --action=*)
       terraform_action="${1#*=}"
       ;;
@@ -14,9 +17,6 @@ while [ $# -gt 0 ]; do
       ;;
     --workspace=*)
       terraform_workspace="${1#*=}"
-      ;;
-    --backend-secret=*)
-      terraform_backend_secret="${1#*=}"
       ;;
     *)
       printf "****************************\n"
@@ -33,6 +33,10 @@ if [[ $terraform_workspace == '$(terraform-workspace)' ]]; then
 fi
 
 # Ensure required arguments
+if [ -z $terraform_environment ] || [ ! -d "${terraform_sh_script_path}/environments/${terraform_environment}" ]; then
+    echo "Please pass an existing environment with --environment=<environment>.."
+    exit 1
+fi
 if [ -z $terraform_action ] || ! [[ "$terraform_action" =~ ^(apply|destroy|init)$ ]]; then
     echo "Please pass the terraform action name with --action=apply/destroy/init .."
     exit 1
@@ -46,7 +50,7 @@ fi
 export TF_IN_AUTOMATION=true
 
 # Grab service principal secret (if passed as argument, used for Terraform's Azure storage account backend and set in env)
-source "$terraform_sh_script_path/terraform/shared/source_backend_secret.sh"
+# source "$terraform_sh_script_path/terraform/shared/source_backend_secret.sh"
 
 # Source the terraform workspace from env if not passed as argument
 if [ -z $terraform_workspace ] && [ ! -z $AKSCOMM_TF_WORKSPACE ]; then
@@ -71,4 +75,4 @@ if [ ! -z $terraform_workspace ]; then
     terraform workspace select $terraform_workspace "${terraform_sh_script_path}/terraform/${terraform_module}" || terraform workspace new $terraform_workspace "${terraform_sh_script_path}/terraform/${terraform_module}"
 fi
 
-terraform "${terraform_action}" -auto-approve -var-file="${terraform_sh_script_path}/terraform_${terraform_module}.tfvars" "${terraform_sh_script_path}/terraform/${terraform_module}"
+terraform "${terraform_action}" -auto-approve -var-file="${terraform_sh_script_path}/environments/${terraform_environment}/terraform_${terraform_module}.tfvars" "${terraform_sh_script_path}/terraform/${terraform_module}"

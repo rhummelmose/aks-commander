@@ -15,10 +15,6 @@ data "terraform_remote_state" "remote_state_core" {
   backend = "azurerm"
 
   config = {
-    tenant_id            = var.tf_backend_tenant_id
-    client_id            = var.tf_backend_client_id
-    client_secret        = var.tf_backend_client_secret
-    subscription_id      = var.tf_backend_subscription_id
     resource_group_name  = var.tf_backend_resource_group_name
     storage_account_name = var.tf_backend_storage_account_name
     container_name       = var.tf_backend_container_name
@@ -30,10 +26,6 @@ data "terraform_remote_state" "remote_state_rbac" {
   backend = "azurerm"
   
   config = {
-    tenant_id            = var.tf_backend_tenant_id
-    client_id            = var.tf_backend_client_id
-    client_secret        = var.tf_backend_client_secret
-    subscription_id      = var.tf_backend_subscription_id
     resource_group_name  = var.tf_backend_resource_group_name
     storage_account_name = var.tf_backend_storage_account_name
     container_name       = var.tf_backend_container_name

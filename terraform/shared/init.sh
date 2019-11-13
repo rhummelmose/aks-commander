@@ -19,12 +19,12 @@ fi
 
 # Sets global variables in the environment
 set -o allexport
-source "${init_sh_script_path}/../../terraform_backend.env"
-source "${init_sh_script_path}/../../terraform_global.env"
+source "${init_sh_script_path}/../../environments/${terraform_environment}/terraform_backend.env"
+source "${init_sh_script_path}/../../environments/${terraform_environment}/terraform_global.env"
 set +o allexport
 
 # Source from env set either locally via IDE or CI/CD
-backend_client_secret=$AKSCOMM_TF_BACKEND_CLIENT_SECRET
+# backend_client_secret=$AKSCOMM_TF_BACKEND_CLIENT_SECRET
 
 # Set Azure CLI subscription (hidden requirement on the Azure AD Terraform resource provider)
 
@@ -44,7 +44,7 @@ function source_tfvars() {
     )"
 }
 
-source_tfvars "${init_sh_script_path}/../../terraform_${terraform_module}.tfvars"
+source_tfvars "${init_sh_script_path}/../../environments/${terraform_environment}/terraform_${terraform_module}.tfvars"
 declare azure_cli_target_subscription
 if [ ! -z $subscription_id ]; then
     azure_cli_target_subscription=$subscription_id
@@ -71,15 +71,25 @@ if [ ! -z $tenantId ]; then
     export ARM_SUBSCRIPTION_ID=$(az account show --query 'id' --output tsv)
 fi
 
+# Set terraform backend container name according to environment
+export TF_VAR_tf_backend_container_name="${terraform_environment}-tfstate"
+declare storage_account_exists
+storage_account_exists=$(az storage account show --name "$TF_VAR_tf_backend_storage_account_name")
+if [ $? -ne "0" ]; then
+    echo "Storage account for Terraform backend not found.."
+    exit 1
+fi
+declare storage_account_container_exists
+storage_account_container_exists=$(az storage container show --account-name "$TF_VAR_tf_backend_storage_account_name" --name "$TF_VAR_tf_backend_container_name")
+if [ $? -ne "0" ]; then
+    az storage container create --account-name "$TF_VAR_tf_backend_storage_account_name" --name "$TF_VAR_tf_backend_container_name"
+fi
+
 # Terraform (Pass 1 to init due to: https://github.com/hashicorp/terraform/issues/21393)
 echo "Do Terraform init.."
 echo '1' | terraform init \
     -reconfigure \
-    -backend-config="tenant_id=${TF_VAR_tf_backend_tenant_id}" \
-    -backend-config="client_id=${TF_VAR_tf_backend_client_id}" \
-    -backend-config="subscription_id=${TF_VAR_tf_backend_subscription_id}" \
     -backend-config="resource_group_name=${TF_VAR_tf_backend_resource_group_name}" \
     -backend-config="storage_account_name=${TF_VAR_tf_backend_storage_account_name}" \
     -backend-config="container_name=${TF_VAR_tf_backend_container_name}" \
-    -backend-config="client_secret=${backend_client_secret}" \
     "${init_sh_script_path}/../${terraform_module}"

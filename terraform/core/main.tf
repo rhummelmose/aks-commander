@@ -68,6 +68,14 @@ resource "azurerm_dns_cname_record" "dns_cname_record" {
   record              = azurerm_traffic_manager_profile.traffic_manager_profile.fqdn
 }
 
+resource "azurerm_dns_cname_record" "dns_cname_wildcard_record" {
+  name                = "*.${var.subdomain}"
+  zone_name           = azurerm_dns_zone.dns_zone.name
+  resource_group_name = azurerm_resource_group.resource_group.name
+  ttl                 = 0
+  record              = azurerm_traffic_manager_profile.traffic_manager_profile.fqdn
+}
+
 resource "azuread_application" "application_aks_cluster" {
   name = "${var.prefix}-aks-cluster"
   type = "native"

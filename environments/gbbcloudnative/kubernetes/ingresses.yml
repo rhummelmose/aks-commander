@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: health-ingress
+  labels:
+    app: health
+    tier: frontend
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /health
+        backend:
+          serviceName: health-service
+          servicePort: 80

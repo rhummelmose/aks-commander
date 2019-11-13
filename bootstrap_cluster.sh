@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # Arguments
-terraform_workspace=$1
-terraform_backend_secret=$2
+terraform_environment=$1
+terraform_workspace=$2
+terraform_backend_secret=$3
 
 # Ensure portability
 echo "Ensure portability.."
@@ -10,6 +11,10 @@ bootstrap_cluster_sh_script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev
 
 # Verify arguments
 echo "Verify arguments.."
+if [ -z $terraform_environment ] || [ ! -d "${terraform_sh_script_path}/environments/${terraform_environment}" ]; then
+    echo "Please pass an existing environment with --environment=<environment>.."
+    exit 1
+fi
 if [ -z $terraform_workspace ] || [[ "$terraform_workspace" == '$(terraform-workspace)' ]]; then
     echo "Terraform workspace is required as 1st parameter.."
     exit 1
@@ -69,8 +74,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Apply API resources
-kubectl apply -f "${bootstrap_cluster_sh_script_path}/resources/bootstrap_cluster/rbac.yml"
-kubectl apply -f "${bootstrap_cluster_sh_script_path}/resources/bootstrap_cluster/namespaces.yml"
+kubectl apply -f "${bootstrap_cluster_sh_script_path}/environments/${terraform_environment}/kubernetes"
 
 # Install Helm charts
 helm3 repo add stable https://kubernetes-charts.storage.googleapis.com/
