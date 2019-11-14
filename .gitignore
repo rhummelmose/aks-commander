@@ -38,3 +38,4 @@ override.tf.json
 AKSCOMM_INGRESS_PUBLIC_IP_VALUE
 AKSCOMM_INGRESS_PUBLIC_IP_ID
 kubernetes_cluster_ingress_ip.out
+*.debug
