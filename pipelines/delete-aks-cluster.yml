@@ -22,7 +22,7 @@ stages:
         azureSubscription: arm-service-connection-rh-subcription-vse-950dkk
         scriptType: bash
         scriptPath: terraform.sh
-        scriptArguments: "--action=destroy --module=tme --backend-secret=$(AKSCOMM_TF_BACKEND_CLIENT_SECRET) --workspace=$(terraform-workspace)"
+        scriptArguments: "--environment=$(terraform-environment) --action=destroy --module=tme --workspace=$(terraform-workspace)"
         addSpnToEnvironment: true
 - stage: terraform_destroy_aks_cluster
   displayName: Terraform destroy AKS cluster
@@ -38,5 +38,5 @@ stages:
         azureSubscription: arm-service-connection-rh-subcription-vse-950dkk
         scriptType: bash
         scriptPath: terraform.sh
-        scriptArguments: "--action=destroy --module=aks --backend-secret=$(AKSCOMM_TF_BACKEND_CLIENT_SECRET) --workspace=$(terraform-workspace)"
+        scriptArguments: "--environment=$(terraform-environment) --action=destroy --module=aks --workspace=$(terraform-workspace)"
         addSpnToEnvironment: true

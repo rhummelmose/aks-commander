@@ -11,6 +11,9 @@ if [ -z "$application_repository" ]; then
     exit 1
 fi
 
+# Initialize return value
+deployment_targets=$(echo [] | jq .)
+
 # Ensure portability
 deployment_targets_for_application_sh_script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
@@ -28,7 +31,7 @@ done
 # If no target environments, return empty array
 num_target_environments=$(echo "$target_environments" | jq 'length')
 if [ "$num_target_environments" -eq "0" ]; then
-    echo "$target_environments" | jq .
+    echo "$deployment_targets" | jq .
     exit 0
 fi
 
@@ -36,7 +39,6 @@ fi
 cd "${deployment_targets_for_application_sh_script_path}/../terraform/aks"
 
 # Loop over all target environments, their workspaces and extract cluster information
-deployment_targets=$(echo [] | jq .)
 for environment in $(echo $target_environments | jq --raw-output '@tsv'); do
     
     echo "Handling environment: ${environment}" >> $debug_file_name

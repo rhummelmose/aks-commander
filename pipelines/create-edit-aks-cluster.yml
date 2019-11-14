@@ -22,7 +22,7 @@ stages:
         azureSubscription: arm-service-connection-rh-subcription-vse-950dkk
         scriptType: bash
         scriptPath: terraform.sh
-        scriptArguments: "--action=apply --module=aks --backend-secret=$(AKSCOMM_TF_BACKEND_CLIENT_SECRET) --workspace=$(terraform-workspace)"
+        scriptArguments: "--environment=$(terraform-environment) --action=apply --module=aks --workspace=$(terraform-workspace)"
         addSpnToEnvironment: true
 - stage: bootstrap_aks_cluster
   displayName: Bootstrap AKS cluster
@@ -38,7 +38,7 @@ stages:
         azureSubscription: arm-service-connection-rh-subcription-vse-950dkk
         scriptType: bash
         scriptPath: bootstrap_cluster.sh
-        scriptArguments: "$(terraform-workspace) $(AKSCOMM_TF_BACKEND_CLIENT_SECRET)"
+        scriptArguments: "$(terraform-environment) $(terraform-workspace)"
         addSpnToEnvironment: true
 - stage: terraform_apply_traffic_manager_endpoint
   displayName: Terraform apply Traffic Manager endpoint
@@ -54,5 +54,5 @@ stages:
         azureSubscription: arm-service-connection-rh-subcription-vse-950dkk
         scriptType: bash
         scriptPath: terraform.sh
-        scriptArguments: "--action=apply --module=tme --backend-secret=$(AKSCOMM_TF_BACKEND_CLIENT_SECRET) --workspace=$(terraform-workspace)"
+        scriptArguments: "--environment=$(terraform-environment) --action=apply --module=tme --workspace=$(terraform-workspace)"
         addSpnToEnvironment: true
