@@ -64,7 +64,7 @@ fi
 export TF_WORKSPACE=$terraform_workspace
 
 # Terraform init
-source "${terraform_sh_script_path}/terraform/shared/init.sh" $terraform_module
+source "${terraform_sh_script_path}/terraform/shared/init.sh" $terraform_environment $terraform_module
 
 if [[ $terraform_action == "init" ]]; then
     exit 0
