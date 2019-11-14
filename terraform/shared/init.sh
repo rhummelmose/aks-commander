@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Get terraform relative path
-terraform_module=$1
+# Arguments
+terraform_environment=$1
+terraform_module=$2
 
 # Ensure portability
 init_sh_script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"

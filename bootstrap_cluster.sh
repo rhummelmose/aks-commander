@@ -54,7 +54,7 @@ cd "${bootstrap_cluster_sh_script_path}/terraform/aks"
 
 # Terraform init
 echo "Run init script.."
-source "${bootstrap_cluster_sh_script_path}/terraform/shared/init.sh" "aks"
+source "${bootstrap_cluster_sh_script_path}/terraform/shared/init.sh" $terraform_environment "aks"
 
 # Get resource group and cluster name
 terraform workspace select $terraform_workspace
