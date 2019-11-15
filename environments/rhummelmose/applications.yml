@@ -1,5 +1,5 @@
 applications:
 - name: cosmocats
-  repository: git@github.com:rhummelmose/cosmocats.git
+  repository: https://github.com/rhummelmose/cosmocats
 - name: aks-reflector-go
-  repository: git@github.com:rhummelmose/aks-reflector-go.git
+  repository: https://github.com/rhummelmose/aks-reflector-go
