@@ -11,6 +11,17 @@ if [ -z "$application_repository" ]; then
     exit 1
 fi
 
+# Install pre-reqs (requires snap)
+install_prereqs() {
+    local yq_installed
+    yq --version > /dev/null 2>&1
+    yq_installed=$?
+    if [ $yq_installed -ne 0 ]; then
+        sudo snap install yq
+    fi
+}
+install_prereqs
+
 # Initialize return value
 deployment_targets=$(echo [] | jq .)
 
