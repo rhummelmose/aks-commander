@@ -17,7 +17,7 @@ install_prereqs() {
     yq --version > /dev/null 2>&1
     yq_installed=$?
     if [ $yq_installed -ne 0 ]; then
-        sudo snap install yq
+        sudo snap install yq > /dev/null 2>&1
     fi
 }
 install_prereqs
