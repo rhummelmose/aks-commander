@@ -47,6 +47,7 @@ if [ $? -ne 0 ]; then
         exit 1
     fi
 fi
+echo "helm3 version output: ${helm3_version_output}"
 
 # Move to aks module directory (required for terraform state command)
 echo "Move into aks module directory.."
