@@ -1,8 +1,7 @@
 # AKS Commander
-Using terraform, bash and optionally a CI/CD system like Azure DevOps to provision AKS clusters - blue/green style.
-
 ![Diagram](https://raw.githubusercontent.com/rhummelmose/aks-commander/master/resources/aks-commander-diagram.png)
 
+Using terraform, bash and optionally a CI/CD system like Azure DevOps to provision AKS clusters - blue/green style.
 ## About
 This repository seeks to provide an example implementation of how green/blue AKS cluster deployments can be done. The code base consists of 4 Terraform modules and some bash to simplify usage and provide additional functionality beyond infrastructure management.
 ## Usage
