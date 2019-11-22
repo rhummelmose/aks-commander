@@ -9,15 +9,15 @@ This repository seeks to provide an example implementation of how green/blue AKS
 In the environment folder you'll find env and tfvars files that configure each environment. The env files provide base configuration for all modules, while module specific tfvars files can override configuration per module.
 ### Example
 ```console
-➜ $ bash terraform.sh --environment=gbbcloudnative --action=apply --module=core
-➜ $ bash terraform.sh --environment=gbbcloudnative --action=apply --module=rbac
-➜ $ bash terraform.sh --environment=gbbcloudnative --action=apply --module=aks --workspace=blue
-➜ $ bash bootstrap_cluster.sh gbbcloudnative blue
-➜ $ bash terraform.sh --environment=gbbcloudnative --action=apply --module=tme --workspace=blue
-➜ $ bash terraform.sh --environment=gbbcloudnative --action=apply --module=aks --workspace=green
-➜ $ bash bootstrap_cluster.sh gbbcloudnative green
-➜ $ bash terraform.sh --environment=gbbcloudnative --action=apply --module=tme --workspace=green
-➜ $ echo "and round it goes.."
+x@y:~$ bash terraform.sh --environment=gbbcloudnative --action=apply --module=core
+x@y:~$ bash terraform.sh --environment=gbbcloudnative --action=apply --module=rbac
+x@y:~$ bash terraform.sh --environment=gbbcloudnative --action=apply --module=aks --workspace=blue
+x@y:~$ bash bootstrap_cluster.sh gbbcloudnative blue
+x@y:~$ bash terraform.sh --environment=gbbcloudnative --action=apply --module=tme --workspace=blue
+x@y:~$ bash terraform.sh --environment=gbbcloudnative --action=apply --module=aks --workspace=green
+x@y:~$ bash bootstrap_cluster.sh gbbcloudnative green
+x@y:~$ bash terraform.sh --environment=gbbcloudnative --action=apply --module=tme --workspace=green
+x@y:~$ echo "and round it goes.."
 ```
 ## Details
 ### Terraform
