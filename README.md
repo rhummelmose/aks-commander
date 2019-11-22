@@ -1,21 +1,23 @@
 # AKS Commander
 Using terraform, bash and optionally a CI/CD system like Azure DevOps to provision AKS clusters - blue/green style.
+
+![Diagram](https://raw.githubusercontent.com/rhummelmose/aks-commander/master/resources/aks-commander-diagram.png)
+
 ## About
 This repository seeks to provide an example implementation of how green/blue AKS cluster deployments can be done. The code base consists of 4 Terraform modules and some bash to simplify usage and provide additional functionality beyond infrastructure management.
-![Diagram](https://raw.githubusercontent.com/rhummelmose/aks-commander/master/resources/aks-commander-diagram.png)
 ## Usage
 In the environment folder you'll find env and tfvars files that configure each environment. The env files provide base configuration for all modules, while module specific tfvars files can override configuration per module.
 ### Example
 ```console
-x@gbb:aks-commander$ bash terraform.sh --environment=gbbcloudnative --action=apply --module=core
-x@gbb:aks-commander$ bash terraform.sh --environment=gbbcloudnative --action=apply --module=rbac
-x@gbb:aks-commander$ bash terraform.sh --environment=gbbcloudnative --action=apply --module=aks --workspace=blue
-x@gbb:aks-commander$ bash bootstrap_cluster.sh gbbcloudnative blue
-x@gbb:aks-commander$ bash terraform.sh --environment=gbbcloudnative --action=apply --module=tme --workspace=blue
-x@gbb:aks-commander$ bash terraform.sh --environment=gbbcloudnative --action=apply --module=aks --workspace=green
-x@gbb:aks-commander$ bash bootstrap_cluster.sh gbbcloudnative green
-x@gbb:aks-commander$ bash terraform.sh --environment=gbbcloudnative --action=apply --module=tme --workspace=green
-x@gbb:aks-commander$ echo "and round it goes.."
+➜ $ bash terraform.sh --environment=gbbcloudnative --action=apply --module=core
+➜ $ bash terraform.sh --environment=gbbcloudnative --action=apply --module=rbac
+➜ $ bash terraform.sh --environment=gbbcloudnative --action=apply --module=aks --workspace=blue
+➜ $ bash bootstrap_cluster.sh gbbcloudnative blue
+➜ $ bash terraform.sh --environment=gbbcloudnative --action=apply --module=tme --workspace=blue
+➜ $ bash terraform.sh --environment=gbbcloudnative --action=apply --module=aks --workspace=green
+➜ $ bash bootstrap_cluster.sh gbbcloudnative green
+➜ $ bash terraform.sh --environment=gbbcloudnative --action=apply --module=tme --workspace=green
+➜ $ echo "and round it goes.."
 ```
 ## Details
 ### Terraform
