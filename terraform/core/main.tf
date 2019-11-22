@@ -104,7 +104,8 @@ resource "azuread_application_password" "application_password_aks_cluster" {
 
   lifecycle {
     ignore_changes = [
-      "end_date"]
+      end_date
+    ]
   }
 }
 

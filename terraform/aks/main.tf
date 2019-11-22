@@ -15,6 +15,7 @@ data "terraform_remote_state" "remote_state_core" {
   backend = "azurerm"
 
   config = {
+    subscription_id      = var.tf_backend_subscription_id
     resource_group_name  = var.tf_backend_resource_group_name
     storage_account_name = var.tf_backend_storage_account_name
     container_name       = var.tf_backend_container_name
@@ -23,9 +24,11 @@ data "terraform_remote_state" "remote_state_core" {
 }
 
 data "terraform_remote_state" "remote_state_rbac" {
+  count = var.enable_aad ? 1 : 0
   backend = "azurerm"
   
   config = {
+    subscription_id      = var.tf_backend_subscription_id
     resource_group_name  = var.tf_backend_resource_group_name
     storage_account_name = var.tf_backend_storage_account_name
     container_name       = var.tf_backend_container_name
@@ -74,13 +77,26 @@ resource "azurerm_kubernetes_cluster" "kubernetes_cluster" {
     }
   }
 
-  role_based_access_control {
-    enabled = true
-      azure_active_directory {
-          server_app_id     = data.terraform_remote_state.remote_state_rbac.outputs.server_app_id
-          server_app_secret = data.terraform_remote_state.remote_state_rbac.outputs.server_app_secret
-          client_app_id     = data.terraform_remote_state.remote_state_rbac.outputs.client_app_id
-          tenant_id         = data.terraform_remote_state.remote_state_rbac.outputs.tenant_id
-      }
+  # RBAC without AAD
+  dynamic "role_based_access_control" {
+    for_each = var.enable_aad ? [] : [1]
+    content {
+      enabled = !var.disable_rbac
+    }
   }
+
+  # RBAC with AAD
+  dynamic "role_based_access_control" {
+    for_each = var.enable_aad ? [1] : []
+    content {
+      enabled = !var.disable_rbac
+      azure_active_directory {
+        server_app_id     = data.terraform_remote_state.remote_state_rbac[0].outputs.server_app_id
+        server_app_secret = data.terraform_remote_state.remote_state_rbac[0].outputs.server_app_secret
+        client_app_id     = data.terraform_remote_state.remote_state_rbac[0].outputs.client_app_id
+        tenant_id         = data.terraform_remote_state.remote_state_rbac[0].outputs.tenant_id
+      }
+    }
+  }
+
 }

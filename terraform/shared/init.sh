@@ -7,16 +7,25 @@ terraform_module=$2
 # Ensure portability
 init_sh_script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-# Install Terraform 0.12.12 if on Linux
-if [[ $(uname) == *"Linux"* ]] && [[ $(terraform version) != *"v0.12.13"* ]]; then
-    mkdir temp_terraform_install
-    cd temp_terraform_install
-    wget --quiet --output-document="terraform.zip" "https://releases.hashicorp.com/terraform/0.12.13/terraform_0.12.13_linux_amd64.zip"
-    unzip -o terraform.zip
-    sudo mv terraform /usr/local/bin/
-    cd ..
-    rm -r temp_terraform_install
+# Ensure latest Terraform, fail otherwise
+terraform_latest_version=$(bash "${init_sh_script_path}/terraform_latest_release.sh" | tr -d "v")
+if [[ $(terraform version) != *"$terraform_latest_version"* ]]; then
+    echo "Environment runs on an old version of terraform.."
+    if [ ! -z "$TF_BUILD" ] && [[ $(uname) == *"Linux"* ]]; then
+        echo "Running on Linux in an Azure DevOps environment, upgrading.."
+        mkdir temp_terraform_install
+        cd temp_terraform_install
+        wget --quiet --output-document="terraform.zip" "https://releases.hashicorp.com/terraform/${terraform_latest_version}/terraform_${terraform_latest_version}_linux_amd64.zip"
+        unzip -o terraform.zip
+        sudo mv terraform /usr/local/bin/
+        cd ..
+        rm -r temp_terraform_install
+    else
+        echo "Please update terraform.."
+        exit 1
+    fi
 fi
+
 
 # Sets global variables in the environment
 set -o allexport
@@ -54,8 +63,6 @@ elif [ ! -z $tenant_id ]; then
 else
     azure_cli_target_subscription=$TF_VAR_subscription_id
 fi
-
-echo "Set Azure CLI account.."
 az account set --subscription $azure_cli_target_subscription
 
 # If we're running on Azure DevOps, we have to get credentials from env vars
@@ -75,21 +82,23 @@ fi
 # Set terraform backend container name according to environment
 export TF_VAR_tf_backend_container_name="${terraform_environment}-tfstate"
 declare storage_account_exists
-storage_account_exists=$(az storage account show --name "$TF_VAR_tf_backend_storage_account_name")
+storage_account_exists=$(az storage account show --name "$TF_VAR_tf_backend_storage_account_name" --subscription "$TF_VAR_tf_backend_subscription_id")
 if [ $? -ne "0" ]; then
     echo "Storage account for Terraform backend not found.."
     exit 1
 fi
 declare storage_account_container_exists
-storage_account_container_exists=$(az storage container show --account-name "$TF_VAR_tf_backend_storage_account_name" --name "$TF_VAR_tf_backend_container_name")
+storage_account_container_exists=$(az storage container show --account-name "$TF_VAR_tf_backend_storage_account_name" --name "$TF_VAR_tf_backend_container_name" --subscription "$TF_VAR_tf_backend_subscription_id")
 if [ $? -ne "0" ]; then
-    az storage container create --account-name "$TF_VAR_tf_backend_storage_account_name" --name "$TF_VAR_tf_backend_container_name"
+    echo "Storage account container doesn't exist. Creating.."
+    az storage container create --account-name "$TF_VAR_tf_backend_storage_account_name" --name "$TF_VAR_tf_backend_container_name" --subscription "$TF_VAR_tf_backend_subscription_id"
 fi
 
 # Terraform (Pass 1 to init due to: https://github.com/hashicorp/terraform/issues/21393)
 echo "Do Terraform init.."
 echo '1' | terraform init \
     -reconfigure \
+    -backend-config="subscription_id=${TF_VAR_tf_backend_subscription_id}" \
     -backend-config="resource_group_name=${TF_VAR_tf_backend_resource_group_name}" \
     -backend-config="storage_account_name=${TF_VAR_tf_backend_storage_account_name}" \
     -backend-config="container_name=${TF_VAR_tf_backend_container_name}" \

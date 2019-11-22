@@ -15,6 +15,7 @@ data "terraform_remote_state" "remote_state_core" {
   backend = "azurerm"
 
   config = {
+    subscription_id      = var.tf_backend_subscription_id
     resource_group_name  = var.tf_backend_resource_group_name
     storage_account_name = var.tf_backend_storage_account_name
     container_name       = var.tf_backend_container_name
@@ -27,6 +28,7 @@ data "terraform_remote_state" "remote_state_aks" {
   workspace = terraform.workspace
 
   config = {
+    subscription_id      = var.tf_backend_subscription_id
     resource_group_name  = var.tf_backend_resource_group_name
     storage_account_name = var.tf_backend_storage_account_name
     container_name       = var.tf_backend_container_name
