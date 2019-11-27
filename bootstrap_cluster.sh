@@ -19,9 +19,6 @@ if [ -z $terraform_workspace ] || [[ "$terraform_workspace" == '$(terraform-work
     exit 1
 fi
 
-# Grab service principal secret (if passed as argument, used for Terraform's Azure storage account backend and set in env)
-# source "$bootstrap_cluster_sh_script_path/terraform/shared/source_backend_secret.sh"
-
 # Verify dependencies
 echo "Verify dependencies.."
 kubectl version --client

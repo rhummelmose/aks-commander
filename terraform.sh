@@ -49,9 +49,6 @@ fi
 # Get automation suitable output from Terraform
 export TF_IN_AUTOMATION=true
 
-# Grab service principal secret (if passed as argument, used for Terraform's Azure storage account backend and set in env)
-# source "$terraform_sh_script_path/terraform/shared/source_backend_secret.sh"
-
 # Source the terraform workspace from env if not passed as argument
 if [ -z $terraform_workspace ] && [ ! -z $AKSCOMM_TF_WORKSPACE ]; then
     terraform_workspace=$AKSCOMM_TF_WORKSPACE
