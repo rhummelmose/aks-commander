@@ -21,6 +21,41 @@ variable "enable_aad" {
   type = bool
 }
 
+variable "network_plugin" {
+  default = "azure"
+  type = string
+}
+
+variable "network_policy" {
+  default = "calico"
+  type = string
+}
+
+variable "load_balancer_sku" {
+  default = "standard"
+  type = string
+}
+
+variable "vnet_subnet_id" {
+  default = null
+  type = string
+}
+
+variable "service_cidr" {
+  default = null
+  type = string
+}
+
+variable "dns_service_ip" {
+  default = null
+  type = string
+}
+
+variable "docker_bridge_cidr" {
+  default = null
+  type = string
+}
+
 ### TERRAFORM BACKEND
 variable "tf_backend_subscription_id" {
   type = string

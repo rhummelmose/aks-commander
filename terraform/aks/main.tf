@@ -54,6 +54,7 @@ resource "azurerm_kubernetes_cluster" "kubernetes_cluster" {
     type                = "VirtualMachineScaleSets"
     availability_zones  = [ "1", "2", "3"]
     enable_auto_scaling = true
+    vnet_subnet_id      = var.vnet_subnet_id
   }
 
   service_principal {
@@ -62,9 +63,12 @@ resource "azurerm_kubernetes_cluster" "kubernetes_cluster" {
   }
 
   network_profile {
-    network_plugin    = "azure"
-    network_policy    = "calico"
-    load_balancer_sku = "standard"
+    network_plugin     = var.network_plugin
+    network_policy     = var.network_policy
+    load_balancer_sku  = var.load_balancer_sku
+    service_cidr       = var.service_cidr
+    dns_service_ip     = var.dns_service_ip
+    docker_bridge_cidr = var.docker_bridge_cidr
   }
 
   addon_profile {
