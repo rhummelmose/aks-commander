@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: health-deployment
+  labels:
+    app: health
+    tier: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: health
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: health
+        tier: frontend
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "100m"
+          limits:
+            memory: "64Mi"
+            cpu: "200m"
