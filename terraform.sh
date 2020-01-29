@@ -37,8 +37,8 @@ if [ -z $terraform_environment ] || [ ! -d "${terraform_sh_script_path}/environm
     echo "Please pass an existing environment with --environment=<environment>.."
     exit 1
 fi
-if [ -z $terraform_action ] || ! [[ "$terraform_action" =~ ^(apply|destroy|init)$ ]]; then
-    echo "Please pass the terraform action name with --action=apply/destroy/init .."
+if [ -z $terraform_action ] || ! [[ "$terraform_action" =~ ^(apply|destroy|init|plan)$ ]]; then
+    echo "Please pass the terraform action name with --action=apply/destroy/init/plan .."
     exit 1
 fi
 if [ -z $terraform_module ] || ! [[ "$terraform_module" =~ ^(core|rbac|aks|tme)$ ]]; then
@@ -69,7 +69,16 @@ fi
 
 unset TF_WORKSPACE
 if [ ! -z $terraform_workspace ]; then
+    echo "Setting workspace.."
     terraform workspace select $terraform_workspace "${terraform_sh_script_path}/terraform/${terraform_module}" || terraform workspace new $terraform_workspace "${terraform_sh_script_path}/terraform/${terraform_module}"
 fi
 
-terraform "${terraform_action}" -auto-approve -var-file="${terraform_sh_script_path}/environments/${terraform_environment}/terraform_${terraform_module}.tfvars" "${terraform_sh_script_path}/terraform/${terraform_module}"
+echo "TF_VAR_tf_backend_container_name=${TF_VAR_tf_backend_container_name}"
+
+if [[ $terraform_action == "plan" ]]; then
+    terraform "${terraform_action}" -var-file="${terraform_sh_script_path}/environments/${terraform_environment}/terraform_${terraform_module}.tfvars" "${terraform_sh_script_path}/terraform/${terraform_module}"
+else
+    terraform "${terraform_action}" -auto-approve -var-file="${terraform_sh_script_path}/environments/${terraform_environment}/terraform_${terraform_module}.tfvars" "${terraform_sh_script_path}/terraform/${terraform_module}"
+fi
+
+exit 0
