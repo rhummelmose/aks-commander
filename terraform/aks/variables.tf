@@ -11,6 +11,11 @@ variable "region" {
   type = string
 }
 
+variable "kubernetes_version" {
+  default = "1.15.7"
+  type = string
+}
+
 variable "disable_rbac" {
   default = false
   type = bool
@@ -34,6 +39,11 @@ variable "network_policy" {
 variable "load_balancer_sku" {
   default = "standard"
   type = string
+}
+
+variable "availability_zones" {
+  default = [ "1", "2", "3"]
+  type = list(string)
 }
 
 variable "vnet_subnet_id" {

@@ -21,10 +21,12 @@ variable "region" {
 
 variable "domain" {
   type        = string
-  description = "The domain to use when configuring DNS and Traffic Manager"
+  description = "The domain to use when configuring DNS and Traffic Manager. Leave as null to skip domain creation."
+  default     = null
 }
 
 variable "subdomain" {
   type        = string
-  description = "The subdomain to use when configuring DNS and Traffic Manager"
+  description = "The subdomain to use when configuring DNS and Traffic Manager. Required if domain is specified. "
+  default     = null
 }

@@ -11,11 +11,11 @@ output "log_analytics_workspace_id" {
 }
 
 output "traffic_manager_profile_name" {
-  value = azurerm_traffic_manager_profile.traffic_manager_profile.name
+  value = var.domain != null ? azurerm_traffic_manager_profile.traffic_manager_profile[0].name : null
 }
 
 output "traffic_manager_profile_id" {
-  value = azurerm_traffic_manager_profile.traffic_manager_profile.id
+  value = var.domain != null ? azurerm_traffic_manager_profile.traffic_manager_profile[0].id : null
 }
 
 output "application_aks_cluster_application_id" {
