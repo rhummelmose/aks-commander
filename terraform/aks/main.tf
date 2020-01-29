@@ -19,7 +19,7 @@ data "terraform_remote_state" "remote_state_core" {
     resource_group_name  = var.tf_backend_resource_group_name
     storage_account_name = var.tf_backend_storage_account_name
     container_name       = var.tf_backend_container_name
-    key                  = "core.terraform.tfstate"
+    key                  = terraform.workspace != null ? "core.terraform.tfstateenv:${terraform.workspace}" : "core.terraform.tfstate"
   }
 }
 
@@ -32,7 +32,7 @@ data "terraform_remote_state" "remote_state_rbac" {
     resource_group_name  = var.tf_backend_resource_group_name
     storage_account_name = var.tf_backend_storage_account_name
     container_name       = var.tf_backend_container_name
-    key                  = "rbac.terraform.tfstate"
+    key                  = terraform.workspace != null ? "rbac.terraform.tfstateenv:${terraform.workspace}" : "rbac.terraform.tfstate"
   }
 }
 
@@ -42,6 +42,7 @@ resource "azurerm_kubernetes_cluster" "kubernetes_cluster" {
   location            = var.region
   resource_group_name = data.terraform_remote_state.remote_state_core.outputs.resource_group_name
   dns_prefix          = "${var.prefix}-aks-cluster-${terraform.workspace}"
+  kubernetes_version  = var.kubernetes_version
 
   agent_pool_profile {
     name                = "default"
@@ -52,7 +53,7 @@ resource "azurerm_kubernetes_cluster" "kubernetes_cluster" {
     os_type             = "Linux"
     os_disk_size_gb     = 30
     type                = "VirtualMachineScaleSets"
-    availability_zones  = [ "1", "2", "3"]
+    availability_zones  = var.availability_zones
     enable_auto_scaling = true
     vnet_subnet_id      = var.vnet_subnet_id
   }
