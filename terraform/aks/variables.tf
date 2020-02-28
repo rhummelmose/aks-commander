@@ -66,6 +66,16 @@ variable "docker_bridge_cidr" {
   type = string
 }
 
+variable "windows_admin_username" {
+  default = "winadmin"
+  type = string
+}
+
+variable "windows_admin_password" {
+  default = null
+  type = string
+}
+
 ### TERRAFORM BACKEND
 variable "tf_backend_subscription_id" {
   type = string

@@ -13,30 +13,38 @@ provider "azurerm" {
 ######################################################################### DATA
 data "terraform_remote_state" "remote_state_core" {
   backend = "azurerm"
+  workspace = terraform.workspace
 
   config = {
     subscription_id      = var.tf_backend_subscription_id
     resource_group_name  = var.tf_backend_resource_group_name
     storage_account_name = var.tf_backend_storage_account_name
     container_name       = var.tf_backend_container_name
-    key                  = terraform.workspace != null ? "core.terraform.tfstateenv:${terraform.workspace}" : "core.terraform.tfstate"
+    key                  = "core.terraform.tfstate"
   }
 }
 
 data "terraform_remote_state" "remote_state_rbac" {
   count = var.enable_aad ? 1 : 0
   backend = "azurerm"
-  
+  workspace = terraform.workspace
+
   config = {
     subscription_id      = var.tf_backend_subscription_id
     resource_group_name  = var.tf_backend_resource_group_name
     storage_account_name = var.tf_backend_storage_account_name
     container_name       = var.tf_backend_container_name
-    key                  = terraform.workspace != null ? "rbac.terraform.tfstateenv:${terraform.workspace}" : "rbac.terraform.tfstate"
+    key                  = "rbac.terraform.tfstate"
   }
 }
 
 ######################################################################### RESOURCES
+
+resource "random_password" "random_password_windows_profile_admin_password" {
+  length = 32
+  special = true
+}
+
 resource "azurerm_kubernetes_cluster" "kubernetes_cluster" {
   name                = "${var.prefix}-aks-cluster-${terraform.workspace}"
   location            = var.region
@@ -70,6 +78,11 @@ resource "azurerm_kubernetes_cluster" "kubernetes_cluster" {
     service_cidr       = var.service_cidr
     dns_service_ip     = var.dns_service_ip
     docker_bridge_cidr = var.docker_bridge_cidr
+  }
+
+  windows_profile {
+    admin_username = var.windows_admin_username
+    admin_password = var.windows_admin_password != null ? var.windows_admin_password : random_password.random_password_windows_profile_admin_password.result
   }
 
   addon_profile {
