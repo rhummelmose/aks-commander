@@ -1,0 +1,5 @@
+applications:
+- name: cosmocats
+  repository: https://github.com/rhummelmose/cosmocats
+- name: aks-reflector-go
+  repository: https://github.com/rhummelmose/aks-reflector-go

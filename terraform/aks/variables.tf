@@ -16,6 +16,11 @@ variable "kubernetes_version" {
   type = string
 }
 
+variable "use_managed_identity" {
+  default = false
+  type = bool
+}
+
 variable "disable_rbac" {
   default = false
   type = bool
@@ -46,6 +51,11 @@ variable "availability_zones" {
   type = list(string)
 }
 
+variable "private_cluster_enabled" {
+  default = false
+  type = bool
+}
+
 variable "vnet_subnet_id" {
   default = null
   type = string
@@ -58,6 +68,11 @@ variable "service_cidr" {
 
 variable "dns_service_ip" {
   default = null
+  type = string
+}
+
+variable "outbound_type" {
+  default = "loadBalancer"
   type = string
 }
 

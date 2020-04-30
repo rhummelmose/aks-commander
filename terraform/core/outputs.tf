@@ -19,9 +19,9 @@ output "traffic_manager_profile_id" {
 }
 
 output "application_aks_cluster_application_id" {
-  value = azuread_application.application_aks_cluster.application_id
+  value = var.use_managed_identity != true ? azuread_application.application_aks_cluster[0].application_id : null
 }
 
 output "random_password_application_aks_cluster_result" {
-  value = random_password.random_password_application_aks_cluster.result
+  value = var.use_managed_identity != true ? random_password.random_password_application_aks_cluster[0].result : null
 }

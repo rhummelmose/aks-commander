@@ -8,6 +8,8 @@ terraform {
 ######################################################################### PROVIDERS
 provider "azurerm" {
   subscription_id = var.subscription_id
+  version = "~> 2.7.0"
+  features {}
 }
 
 ######################################################################### DATA
@@ -52,13 +54,11 @@ resource "azurerm_kubernetes_cluster" "kubernetes_cluster" {
   dns_prefix          = "${var.prefix}-aks-cluster-${terraform.workspace}"
   kubernetes_version  = var.kubernetes_version
 
-  agent_pool_profile {
+  default_node_pool {
     name                = "default"
-    count               = 3
     min_count           = 3
     max_count           = 10
     vm_size             = "Standard_DS1_v2"
-    os_type             = "Linux"
     os_disk_size_gb     = 30
     type                = "VirtualMachineScaleSets"
     availability_zones  = var.availability_zones
@@ -66,10 +66,22 @@ resource "azurerm_kubernetes_cluster" "kubernetes_cluster" {
     vnet_subnet_id      = var.vnet_subnet_id
   }
 
-  service_principal {
-    client_id     = data.terraform_remote_state.remote_state_core.outputs.application_aks_cluster_application_id
-    client_secret = data.terraform_remote_state.remote_state_core.outputs.random_password_application_aks_cluster_result
+  dynamic "identity" {
+    for_each = var.use_managed_identity ? [1] : []
+    content {
+      type = "SystemAssigned"
+    }
   }
+
+  dynamic "service_principal" {
+    for_each = var.use_managed_identity ? [] : [1]
+    content {
+      client_id     = data.terraform_remote_state.remote_state_core.outputs.application_aks_cluster_application_id
+      client_secret = data.terraform_remote_state.remote_state_core.outputs.random_password_application_aks_cluster_result
+    }
+  }
+
+  private_cluster_enabled = var.private_cluster_enabled
 
   network_profile {
     network_plugin     = var.network_plugin
@@ -78,6 +90,7 @@ resource "azurerm_kubernetes_cluster" "kubernetes_cluster" {
     service_cidr       = var.service_cidr
     dns_service_ip     = var.dns_service_ip
     docker_bridge_cidr = var.docker_bridge_cidr
+    outbound_type      = var.outbound_type
   }
 
   windows_profile {

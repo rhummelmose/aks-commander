@@ -81,28 +81,32 @@ resource "azurerm_dns_cname_record" "dns_cname_wildcard_record" {
 }
 
 resource "azuread_application" "application_aks_cluster" {
+  count = var.use_managed_identity != true ? 1 : 0
   name = "${var.prefix}-aks-cluster"
   type = "native"
 }
 
 resource "azuread_service_principal" "service_principal_aks_cluster" {
-  application_id = azuread_application.application_aks_cluster.application_id
+  count = var.use_managed_identity != true ? 1 : 0
+  application_id = azuread_application.application_aks_cluster[0].application_id
   # The following tag is required to make the service principal visible under enterprise applications in the portal
   tags = ["WindowsAzureActiveDirectoryIntegratedApp"]
 }
 
 resource "random_password" "random_password_application_aks_cluster" {
+  count = var.use_managed_identity != true ? 1 : 0
   length = 64
   special = true
 
   keepers = {
-    azuread_application = azuread_application.application_aks_cluster.application_id
+    azuread_application = azuread_application.application_aks_cluster[0].application_id
   }
 }
 
 resource "azuread_application_password" "application_password_aks_cluster" {
-  application_object_id = azuread_application.application_aks_cluster.id
-  value = random_password.random_password_application_aks_cluster.result
+  count = var.use_managed_identity != true ? 1 : 0
+  application_object_id = azuread_application.application_aks_cluster[0].id
+  value = random_password.random_password_application_aks_cluster[0].result
 
   end_date = timeadd(timestamp(), "87600h")
 

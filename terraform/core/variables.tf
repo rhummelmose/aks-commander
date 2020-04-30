@@ -30,3 +30,9 @@ variable "subdomain" {
   description = "The subdomain to use when configuring DNS and Traffic Manager. Required if domain is specified. "
   default     = null
 }
+
+variable "use_managed_identity" {
+  type        = bool
+  description = "Skips service principal creation."
+  default     = false
+}
